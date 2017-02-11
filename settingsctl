@@ -1,0 +1,132 @@
+#!/usr/bin/env python3
+
+# This file is a part of settingsctl.
+
+# settingsctl is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+
+# settingsctl is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+
+# You should have received a copy of the GNU General Public License
+# along with settingsctl.  If not, see <http://www.gnu.org/licenses/gpl.txt>.
+
+# A copy of the license is included in the LICENSE file, which should have
+# been distributed along with this program.
+# If not, see http://www.gnu.org/licenses/gpl.txt
+
+
+# Copyright © Bharadwaj Raju <bharadwaj.raju777@gmail.com>
+
+import os
+import sys
+import argparse
+import subprocess as sp
+from textwrap import dedent
+
+
+if os.path.isdir('lib'):
+	lib = 'lib/'
+
+elif os.path.isdir('/usr/lib/settingsctl'):
+	lib = '/usr/lib/settingsctl/'
+
+elif os.path.isdir(os.getenv('SETTINGSCTL_LIB', None)):
+	lib = os.getenv('SETTINGSCTL_LIB')
+
+else:
+	print(dedent('settingsctl settings library not found.\n\
+		It should be included with the settingsctl distribution in lib/,\
+		see manual page settingsctl-library(5)'))
+
+
+def fstree(dir_, maxdepth=None):
+
+	global recursion_number  # This needs to modified later in __tree()
+	recursion_number = 0
+
+	def __tree(dir_):
+
+		global recursion_number
+
+		tree = {}
+
+		for i in os.listdir(dir_):
+
+			if os.path.isfile(os.path.join(dir_, i)):
+				tree[i] = ''
+
+			else:
+				recursion_number += 1
+
+				if maxdepth is not None:
+					if recursion_number <= maxdepth:
+						tree[i + '/'] = __tree(os.path.join(dir_, i))
+
+				else:
+					tree[i + '/'] = __tree(os.path.join(dir_, i))
+
+		return tree
+
+	return __tree(dir_)
+
+def pretty(d, indent=0):
+
+	for key, value in d.items():
+		print('\t' * indent + str(key))
+
+		if isinstance(value, dict):
+			pretty(value, indent+1)
+
+		else:
+			print('\t' * (indent+1) + str(value))
+
+
+class SettingsCtlCLI(object):
+
+	def __init__(self):
+		parser = argparse.ArgumentParser(
+					description='Cross-desktop settings tool',
+					usage='settingsctl command args')
+
+		parser.add_argument('command',
+							help='Command to run. See manual settingsctl(1)')
+
+		args = parser.parse_args(sys.argv[1:2])
+
+		if not hasattr(self, args.command):
+			print('Unrecognized command. See manual settingsctl(1)')
+			parser.print_help()
+			sys.exit(1)
+
+		getattr(self, args.command)()
+
+
+	def list(self):
+
+		parser = argparse.ArgumentParser(description='List settings')
+		parser.add_argument('subsetting', nargs='?', default='')
+
+		args = parser.parse_args(sys.argv[2:])
+
+		print('\n'.join(os.listdir(os.path.join(lib, args.subsetting))))
+
+
+	def tree(self):
+
+		parser = argparse.ArgumentParser(description='tree(1)-like settings list')
+		parser.add_argument('subsetting', nargs='?', default='')
+		parser.add_argument('--max-depth', type=int, nargs='?', const=1)
+
+		args = parser.parse_args(sys.argv[2:])
+
+		pretty(fstree(os.path.join(lib, args.subsetting)))
+
+
+
+if __name__ == '__main__':
+	SettingsCtlCLI()
