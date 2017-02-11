@@ -12,7 +12,11 @@ a {
 }
 
 a:hover {
-	background-color: #eee;
+	text-decoration: underline;
+}
+
+img a:hover {
+	text-decoration: none;
 }
 
 #menu {

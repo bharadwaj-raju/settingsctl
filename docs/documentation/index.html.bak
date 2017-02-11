@@ -7,14 +7,14 @@
 </head>
 <body>
 	<div id="header">
-		<a href="../settingsctl"><img src="resources/logo.png" alt="settingsctl" title="settingsctl"/></a>
+		<a href="/settingsctl"><img src="resources/logo.png" alt="settingsctl" title="settingsctl"/></a>
 		<br />
 		<span id="headerSubtitle">cross-desktop settings tool for *nix</span>
 	</div>
 
 	<div id="menu">
 		<span class="left">
-		<a href="../settingsctl">home</a>
+		<a href="/settingsctl">home</a>
 		<a class="thisSite" href="documentation/">docs</a>
 		<a href="https://github.com/bharadwaj-raju/settingsctl">code</a>
 		<a href="documentation/install.html">install</a>
