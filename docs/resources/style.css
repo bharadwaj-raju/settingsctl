@@ -98,11 +98,11 @@ h4 {
 
 #nav {
 	background-color: #fff;
-	float: left;
+	float: left top;
 	margin: 0 1px 0 0;
 	padding: 1em 0;
-	border-right: 1px dotted #ccc;
 	width: 200px;
+	position: fixed;
 }
 
 #nav ul {
@@ -136,6 +136,7 @@ h4 {
 	margin: 0 0 0 200px;
 	padding: 1.5em;
 	max-width: 50em;
+	border-left: 1px dotted #ccc;
 }
 
 #footer {
