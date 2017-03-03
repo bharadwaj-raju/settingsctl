@@ -3,9 +3,11 @@
 <head>
 	<title>Docs::Tutorial - settingsctl</title>
 	<link rel="stylesheet" type="text/css" href="../resources/style.css">
+	<link rel="stylesheet" type="text/css" href="../resources/prism.css">
 	<meta charset="utf-8">
 </head>
 <body>
+	<script src="../resources/prism.js"></script>
 	<div id="header">
 		<a href="../"><img src="../resources/logo.png" alt="settingsctl" title="settingsctl"/></a>
 		<br />
@@ -21,7 +23,7 @@
 		</span>
 	</div>
 
-	<div id="content">
+	<div id="content" class="language-none">
 		<div id="nav">
 			<ul>
 			<li><a href="../documentation">docs</a></li>
@@ -29,6 +31,8 @@
 			<li><a href="../documentation/install.html">installation</a></li>
 			<li><a href="../documentation/faq.html">faq</a></li>
 			<li><a href="../documentation/settings.html">settings</a></li>
+			<li><a href="../documentation/creating-a-setting.html">creating a setting</a></li>
+			<li><a href="../documentation/settings-lib.html">settings lib</a></li>
 			<li><a href="../documentation/coding-style.html">coding style</a></li>
 			</ul>
 				</div>
@@ -46,18 +50,36 @@
 
 			You can get the value set of a setting through the <code>get</code> command.
 
-			<pre><code>
+			<pre class="language-bash"><code>
 $ settingsctl get appearance.desktop.wallpaper
 /path/to/wallpaper
-			</code></pre>
+			</pre></code>
 
 			This should return the wallpaper (or more than one, if multi-monitor) you set.
+
+			<h3>Getting types</h3>
+
+			You can get the data type of a setting through the <code>get-type</code> command.
+			There may be further explanation on the next line.
+
+			<pre class="language-bash"><code>
+$ settingsctl get-type appearance.desktop.wallpaper
+string
+file path
+
+$ settingsctl get-type power.screen-lock.timeout
+integer
+seconds
+
+$ settingsctl get-type power.screen-lock.is-enabled
+boolean
+			</pre></code>
 
 			<h2>Setting</h2>
 
 			You can set a setting throught the <code>set</code> command.
 
-			<pre><code>
+			<pre class="language-bash"><code>
 $ settingsctl set appearance.desktop.wallpaper /path/to/new/wallpaper 1
 			</pre></code>
 
@@ -67,7 +89,7 @@ $ settingsctl set appearance.desktop.wallpaper /path/to/new/wallpaper 1
 
 			You can get a list of subsettings through the <code>list</code> command.
 
-			<pre><code>
+			<pre class="language-bash"><code>
 $ settingsctl list
 appearance/
 power/
@@ -83,7 +105,7 @@ theme
 
 			You can get a tree of the settings through the <code>tree</code> command.
 
-			<pre><code>
+			<pre class="language-bash"><code>
 $ settingsctl tree
 appearance/
 	desktop/

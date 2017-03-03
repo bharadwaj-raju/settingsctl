@@ -1,0 +1,127 @@
+<!doctype html>
+<html>
+<head>
+	<title>Docs::Creating A Setting - settingsctl</title>
+	<link rel="stylesheet" type="text/css" href="../resources/style.css">
+	<meta charset="utf-8">
+	<link href="../resources/prism.css" rel="stylesheet" />
+</head>
+<body>
+	<script src="../resources/prism.js"></script>
+	<div id="header">
+		<a href="../"><img src="../resources/logo.png" alt="settingsctl" title="settingsctl"/></a>
+		<br />
+		<span id="headerSubtitle">cross-desktop settings tool for *nix</span>
+	</div>
+
+	<div id="menu">
+		<span class="left">
+		<a href="../">home</a>
+		<a class="thisSite" href="../documentation/">docs</a>
+		<a href="https://github.com/bharadwaj-raju/settingsctl">code</a>
+		<a href="../documentation/install.html">install</a>
+		</span>
+	</div>
+
+	<div id="content">
+		<div id="nav">
+			<ul>
+			<li><a href="../documentation">docs</a></li>
+			<li><a href="../documentation/tutorial.html">tutorial</a></li>
+			<li><a href="../documentation/install.html">installation</a></li>
+			<li><a href="../documentation/faq.html">faq</a></li>
+			<li><a href="../documentation/settings.html">settings</a></li>
+			<li><a href="../documentation/creating-a-setting.html" class="thisPage">creating a setting</a></li>
+			<li><a href="../documentation/settings-lib.html">settings lib</a></li>
+			<li><a href="../documentation/coding-style.html">coding style</a></li>
+			</ul>
+				</div>
+
+		<div id="main">
+			<h2 id="overview">Overview</h2>
+			Settings must exist in the settingsctl <a href="../documentation/settings-lib.html">lib</a>. <br /> <br />
+
+			A settings file must exist as a Python file in the appropriate subdirectory of the lib. For example,
+			a setting <code>appearance.desktop.wallpaper</code> will be defined in <code>appearance/desktop/wallpaper.py</code>,
+			which will be a subdirectory of the lib. <br /> <br />
+
+			The settings file must define a <code>settings</code> string, and the functions
+			<code>format_set(data)</code>, <code>get()</code>, <code>get_type()</code> and <code>set(data)</code>. <br />
+
+			<br />
+
+			<h2 id="must-define">What a setting must define</h2>
+
+			These are the things that a setting <em>must</em> define in its file:
+
+			<br />
+
+			<h3 id="setting-str">The <code>settings</code> string</h3>
+
+			The file must define a variable settings that should contain the dot-separated setting name. <br /> <br />
+
+			Example (for setting <code>example</code> of <code>hello.world</code>):
+
+			<pre><code class="language-python">
+setting = 'hello.world.example'
+			</pre></code>
+
+			<br />
+
+			<h3 id="format-set-func"><code>format_set(<i>data</i>)</code></h3>
+
+			This function will receive the raw list of arguments received from the user (argument <code>data</code>). <br /> <br />
+
+			It should validate and perhaps format (for later use by <code>set()</code>) the data. <br />
+			Any error found during validation should be handled as per <a href="#error-handling">Error Handling</a> <br /> <br />
+
+			It can also just return the data passed to it if no such validation or formatting is needed.<br />
+
+			<br />
+
+			<h3 id="get-func"><code>get()</code></h3>
+
+			This will implement the getting of the setting being handled. <br /> <br />
+
+			Return the value obtained. It will be printed by the <code>settingsctl</code> utility. <br />
+
+			<br />
+
+			<h3 id="get-type-func"><code>get_type()</code></h3>
+
+			This will return the type and description of the data you'll get from the user. <br /> <br />
+
+			It should return a dictionary:
+
+			<pre><code class="language-python">
+return {
+         'type': 'TYPE (one of "string", "integer", "decimal" or "list")',
+         'description': 'DESCRIPTION of the data (example: "list of files")'
+       }
+			</pre></code>
+
+			<br />
+
+			<h3 id="set-func"><code>set(<i>data</i>)</code></h3>
+
+			This will implement the setting being handled. <br /> <br />
+
+			It will get the user's arguments <em>after</em> being run through <code>format_set(<i>data</i>)</code> as the <code>data</code> argument.
+
+			<br /> <br />
+
+			<h2 id="error-handling">Error Handling</h2>
+
+			Any errors must be handled as:
+
+			<pre class="language-python"><code>
+print('{name}: error message')
+			</pre></code>
+
+			where <code>{name}</code> should be replaced with your setting's name as defined in
+			the <a href="#setting-str"><code>setting</code></a> variable.
+
+
+	</div>
+	</div>
+</body>

@@ -3,9 +3,11 @@
 <head>
 	<title>Docs::Installation - settingsctl</title>
 	<link rel="stylesheet" type="text/css" href="../resources/style.css">
+	<link rel="stylesheet" type="text/css" href="../resources/prism.css"
 	<meta charset="utf-8">
 </head>
 <body>
+	<script src="../resources/prism.js"></script>
 	<div id="header">
 		<a href="../"><img src="../resources/logo.png" alt="settingsctl" title="settingsctl"/></a>
 		<br />
@@ -29,15 +31,20 @@
 			<li><a href="../documentation/install.html" class="thisPage">installation</a></li>
 			<li><a href="../documentation/faq.html">faq</a></li>
 			<li><a href="../documentation/settings.html">settings</a></li>
+			<li><a href="../documentation/creating-a-setting.html">creating a setting</a></li>
+			<li><a href="../documentation/settings-lib.html">settings lib</a></li>
 			<li><a href="../documentation/coding-style.html">coding style</a></li>
 			</ul>
 				</div>
 
-		<div id="main">
+		<div id="main" class="language-bash">
 			<h2 >Installation</h2>
 			<ol>
-				<li>Get the <a href="https://github.com/bharadwaj-raju/settingsctl">code</a>.</li>
-				<li>Run the included script: <code>sudo sh install.sh</code></li>
+				<li>Get the <a href="https://github.com/bharadwaj-raju/settingsctl">code</a>. </li> <br />
+				<li>Run the included script:
+					<pre><code>
+$ sudo sh install.sh
+					</pre></code></li>
 			</ol>
 
 			Now you should be able to run <code>settingsctl</code>. <br /> <br />

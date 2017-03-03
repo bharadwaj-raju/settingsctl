@@ -1,11 +1,13 @@
 <!doctype html>
 <html>
 <head>
-	<title>Docs - settingsctl</title>
+	<title>Docs::Settings Lib - settingsctl</title>
 	<link rel="stylesheet" type="text/css" href="../resources/style.css">
 	<meta charset="utf-8">
+	<link href="../resources/prism.css" rel="stylesheet" />
 </head>
 <body>
+	<script src="../resources/prism.js"></script>
 	<div id="header">
 		<a href="../"><img src="../resources/logo.png" alt="settingsctl" title="settingsctl"/></a>
 		<br />
@@ -24,22 +26,35 @@
 	<div id="content">
 		<div id="nav">
 			<ul>
-			<li><a href="../documentation" class="thisPage">docs</a></li>
+			<li><a href="../documentation">docs</a></li>
 			<li><a href="../documentation/tutorial.html">tutorial</a></li>
 			<li><a href="../documentation/install.html">installation</a></li>
 			<li><a href="../documentation/faq.html">faq</a></li>
 			<li><a href="../documentation/settings.html">settings</a></li>
 			<li><a href="../documentation/creating-a-setting.html">creating a setting</a></li>
-			<li><a href="../documentation/settings-lib.html">settings lib</a></li>
+			<li><a href="../documentation/settings-lib.html" class="thisPage">settings lib</a></li>
 			<li><a href="../documentation/coding-style.html">coding style</a></li>
 			</ul>
 				</div>
 
 		<div id="main">
-		<h2>Documentation</h2>
-		<p>Documentation for settingsctl.</p>
+			<h2 id="overview">Overview</h2>
+			<code>settingsctl</code> defines each setting in a Python file. <br /> <br />
 
-		<p>See the sidebar.</p>
+			These settings are in a hierarchial directory form, as shown by the settingsctl <code>tree</code> command. <br /> <br />
+
+			These settings are stored in what is called the settingsctl <i><code>lib</code></i> (as in settings <em>library</em>). <br /> <br />
+
+			<h2 id="location">Location</h2>
+
+			settingsctl looks for the lib in three places, in this order: <br />
+
+			<ol>
+				<li>The directory set by the environment variable <code>$SETTINGSCTL_LIB</code></li>
+				<li>A <code>lib/</code> directory in the current directory</li>
+				<li>The system-wide lib <code>/usr/lib/settingsctl/</code></li>
+			</ol>
+
 	</div>
 	</div>
 </body>

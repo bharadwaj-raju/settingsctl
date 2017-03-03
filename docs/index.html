@@ -3,9 +3,11 @@
 <head>
 	<title>settingsctl</title>
 	<link rel="stylesheet" type="text/css" href="resources/style.css">
+	<link rel="stylesheet" type="text/css" href="resources/prism.css"
 	<meta charset="utf-8">
 </head>
 <body>
+	<script src="resources/prism.js"></script>
 	<div id="header">
 		<a href="/settingsctl"><img src="resources/logo.png" alt="settingsctl" title="settingsctl"/></a>
 		<br />
@@ -21,7 +23,7 @@
 		</span>
 	</div>
 
-	<div id="content">
+	<div id="content" class="language-none">
 		<div id="nav">
 			<ul><li></li></ul>
 		</div>
@@ -32,7 +34,7 @@
 
 		<h2 id="examples">Examples</h2>
 
-		<pre><code>
+		<pre class="language-bash"><code>
 $ settingsctl get appearance.desktop.wallpaper
 /path/to/wallpaper
 

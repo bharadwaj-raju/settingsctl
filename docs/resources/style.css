@@ -159,14 +159,21 @@ h4 {
 	padding: 0;
 }
 
-pre code {
-	background-color: #eee;
-	border: 1px solid #999;
-	display: block;
-	padding: 20px;
+pre {
+	font-family: monospace !important;
+	padding-top: 2px !important;
+	padding-bottom: 2px !important;
 }
 
 code {
+	font-family: monospace !important;
 	font-size: 120%;
+	text-shadow: none !important;
+}
+
+:not(pre) > code {
+	background-color: rgba(211, 211, 211, 0.5) !important;
+	color: inherit !important;
+	font-size: 110%;
 }
 

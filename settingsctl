@@ -26,25 +26,41 @@ import os
 import sys
 import argparse
 import subprocess as sp
+import json
 from textwrap import dedent
 
+__version__ = '0.0.1'
 
-if os.path.isdir('lib'):
+if os.path.isdir(os.getenv('SETTINGSCTL_LIB', '')):
+	lib = os.getenv('SETTINGSCTL_LIB')
+
+elif os.path.isdir('lib'):
 	lib = 'lib/'
 
 elif os.path.isdir('/usr/lib/settingsctl'):
 	lib = '/usr/lib/settingsctl/'
 
-elif os.path.isdir(os.getenv('SETTINGSCTL_LIB', None)):
-	lib = os.getenv('SETTINGSCTL_LIB')
-
 else:
-	print(dedent('settingsctl settings library not found.\n\
+	print(dedent('settingsctl: settingsctl settings library not found.\n\
 		It should be included with the settingsctl distribution in lib/,\
-		see manual page settingsctl-library(5)'))
+		see manual page settingsctl(1), section ENVIRONMENT.'))
 
+
+# Map types from the human-readable to Python equivalents
+
+types_map = {
+			'list': list,
+			'string': str,
+			'integer': int,
+			'decimal': float
+			}
+
+# Generates a filesystem tree (as a dictionary) recursively
 
 def fstree(dir_, maxdepth=None):
+
+	if maxdepth == 0:
+		maxdepth = None
 
 	global recursion_number  # This needs to modified later in __tree()
 	recursion_number = 0
@@ -58,7 +74,7 @@ def fstree(dir_, maxdepth=None):
 		for i in os.listdir(dir_):
 
 			if os.path.isfile(os.path.join(dir_, i)):
-				tree[i] = ''
+				tree[i.replace('.py', '')] = ''
 
 			else:
 				recursion_number += 1
@@ -74,57 +90,245 @@ def fstree(dir_, maxdepth=None):
 
 	return __tree(dir_)
 
+
+def get_setting_module(setting):
+
+	setting = setting.split('.')
+	last = setting.pop()
+	setting = '/'.join(setting)
+
+	sys.path.insert(0, os.path.join(lib, setting))
+
+	return __import__(last)
+
+# Pretty-print a filesystem tree as provided by fstree()
+
 def pretty(d, indent=0):
 
 	for key, value in d.items():
-		print('\t' * indent + str(key))
+		print('    ' * indent + str(key))
 
 		if isinstance(value, dict):
 			pretty(value, indent+1)
 
 		else:
-			print('\t' * (indent+1) + str(value))
+			print('    ' * (indent+1) + str(value))
+
+
+class ArgumentParser(argparse.ArgumentParser):
+
+	def format_help(self):
+
+		return dedent('''\
+				usage: settingsctl command [args]
+
+				settingsctl — a cross-desktop settings tool
+
+				Commands:
+				  get        get a setting's value
+				  set        set a setting's value
+				  list       list settings
+				  tree       hierarchial tree of settings
+				  get-type   get the data type of a setting
+
+				Options:
+				  --help     print this help message, and exit
+				  --version  print version and legal information, and exit
+
+				Manual page: settingsctl(1)
+				Report bugs at: <https://github.com/bharadwaj-raju/settingsctl/issues/new>
+				settingsctl home page: <https://bharadwaj-raju.github.io/settingsctl>
+				Full documentation: <https://bharadwaj-raju.github.io/settingsctl/documentation>
+				''')
+
+HELP_BOILERPLATE = dedent('''\
+		usage: {usage}
+
+		settingsctl — a cross-desktop-settings tool
+
+		{options_etc}
+
+		Manual page: settingsctl(1)
+		Report bugs at: <https://github.com/bharadwaj-raju/settingsctl/issues/new>
+		settingsctl home page: <https://bharadwaj-raju.github.io/settingsctl>
+		Full documentation: <https://bharadwaj-raju.github.io/settingsctl/documentation>
+
+		''')
+
+class SubArgumentParser(argparse.ArgumentParser):
+
+	def set_help(self, help_str):
+
+		self.format_help = lambda: help_str
 
 
 class SettingsCtlCLI(object):
 
 	def __init__(self):
-		parser = argparse.ArgumentParser(
+		parser = ArgumentParser(
 					description='Cross-desktop settings tool',
-					usage='settingsctl command args')
+					usage='settingsctl <command> [args, ...]')
+
 
 		parser.add_argument('command',
-							help='Command to run. See manual settingsctl(1)')
+							help='Command to run. See manual settingsctl(1)',
+							default='',
+							nargs='?')
+
+		parser.add_argument('--version',
+							help='Show version and legal info.',
+							action='store_true')
 
 		args = parser.parse_args(sys.argv[1:2])
 
-		if not hasattr(self, args.command):
-			print('Unrecognized command. See manual settingsctl(1)')
+		if args.command == '':
+			if args.version:
+				print(
+				dedent('''\
+					settingsctl {version}
+					Copyright © Bharadwaj Raju
+					License GPLv3+: GNU GPL version 3 or later <http://gnu.org/licenses/gpl.txt>
+					This is free software: you are free to change and redistribute it.
+					There is NO WARRANTY, to the extent permitted by law.'''.format(version=__version__)))
+
+				sys.exit(0)
+
+			else:
+				print('settingsctl: no command specified. See manual settingsctl(1) or the help printed below.\n')
+				parser.print_help()
+				sys.exit(1)
+
+
+		if not hasattr(self, args.command.replace('-', '_')):
+			print('settingsctl: unrecognized command "{cmd}". See manual settingsctl(1) or the help printed below.\n'.format(cmd=args.command))
 			parser.print_help()
 			sys.exit(1)
 
-		getattr(self, args.command)()
+		getattr(self, args.command.replace('-', '_'))()
 
 
 	def list(self):
 
-		parser = argparse.ArgumentParser(description='List settings')
-		parser.add_argument('subsetting', nargs='?', default='')
+		parser = SubArgumentParser(
+					description='List settings',
+					usage='settingsctl list [setting]')
+
+		parser.set_help(HELP_BOILERPLATE.format(
+							usage=parser.format_usage(),
+							options_etc=dedent('''\
+								Options:
+								  setting        the setting to list
+								''')
+							)
+						)
+
+
+
+		parser.add_argument('setting', nargs='?', default='')
 
 		args = parser.parse_args(sys.argv[2:])
 
-		print('\n'.join(os.listdir(os.path.join(lib, args.subsetting))))
+		print('\n'.join(os.listdir(os.path.join(lib, args.setting))))
 
 
 	def tree(self):
 
-		parser = argparse.ArgumentParser(description='tree(1)-like settings list')
-		parser.add_argument('subsetting', nargs='?', default='')
-		parser.add_argument('--max-depth', type=int, nargs='?', const=1)
+		parser = SubArgumentParser(
+					description='Hierarchial tree of settings',
+					usage='settingsctl tree [setting] [--max-depth]')
+
+		parser.set_help(HELP_BOILERPLATE.format(
+							usage=parser.format_usage(),
+							options_etc=dedent('''\
+								Options:
+								  setting        the setting to tree
+								  --max-depth    the maximum depth of the tree. default = infinity
+								''')
+							)
+						)
+
+
+		parser.add_argument('setting', nargs='?', default='')
+		parser.add_argument('--max-depth', type=int, nargs='?', const=0)
 
 		args = parser.parse_args(sys.argv[2:])
 
-		pretty(fstree(os.path.join(lib, args.subsetting)))
+		pretty(fstree(os.path.join(lib, args.setting), args.max_depth))
+
+
+	def get_type(self):
+
+		parser = SubArgumentParser(
+					description='Get the type of a setting',
+					usage='settingsctl get-type <setting>')
+
+		parser.add_argument('setting', type=str)
+
+		parser.set_help(HELP_BOILERPLATE.format(
+							usage=parser.format_usage(),
+							options_etc='Arguments:\n  setting        the setting to get the type of'
+							)
+						)
+
+
+		args = parser.parse_args(sys.argv[2:])
+
+		module = get_setting_module(args.setting)
+		print(module.get_type()['type'])
+		print(module.get_type()['description'])
+
+
+	def get(self):
+
+		parser = SubArgumentParser(
+					description='Get a setting',
+					usage='settingsctl get <setting>')
+
+		parser.set_help(HELP_BOILERPLATE.format(
+							usage=parser.format_usage(),
+							options_etc=dedent('''\
+								Arguments:
+								  setting        the setting whose value to get
+								''')
+							)
+						)
+
+
+
+		parser.add_argument('setting', type=str)
+
+		args = parser.parse_args(sys.argv[2:])
+
+		module = get_setting_module(args.setting)
+		print(module.get())
+
+
+	def set(self):
+
+		parser = SubArgumentParser(
+					description='Set a setting',
+					usage='settingsctl set <setting> <value>')
+
+		parser.set_help(HELP_BOILERPLATE.format(
+							usage=parser.format_usage(),
+							options_etc=dedent('''\
+								Arguments:
+								  setting        the setting whose value to set
+								  value          the value to set it to
+								''')
+							)
+						)
+
+
+		parser.add_argument('setting', type=str)
+		parser.add_argument('value', type=str, nargs='*')
+
+		args = parser.parse_args(sys.argv[2:])
+
+		module = get_setting_module(args.setting)
+		value_fmt = module.format_set(args.value)
+		print(args.setting, '→', value_fmt)
+		module.set(value_fmt)
 
 
 
