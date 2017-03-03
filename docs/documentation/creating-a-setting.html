@@ -38,6 +38,8 @@
 
 		<div id="main">
 			<h2 id="overview">Overview</h2>
+			This page will describe how to create a new setting for settingsctl to use.
+
 			Settings must exist in the settingsctl <a href="../documentation/settings-lib.html">lib</a>. <br /> <br />
 
 			A settings file must exist as a Python file in the appropriate subdirectory of the lib. For example,
@@ -45,7 +47,10 @@
 			which will be a subdirectory of the lib. <br /> <br />
 
 			The settings file must define a <code>settings</code> string, and the functions
-			<code>format_set(data)</code>, <code>get()</code>, <code>get_type()</code> and <code>set(data)</code>. <br />
+			<code>format_set(data)</code>, <code>get()</code>, <code>get_type()</code> and <code>set(data)</code>. <br /> <br />
+
+			Of course, <em>inclusion</em> of your setting into the settingsctl lib would require you
+			to <a href="https://github.com/bharadwaj-raju/settingsctl/issues/new">file an issue</a>. <br />
 
 			<br />
 
@@ -69,10 +74,23 @@ setting = 'hello.world.example'
 
 			<h3 id="format-set-func"><code>format_set(<i>data</i>)</code></h3>
 
-			This function will receive the raw list of arguments received from the user (argument <code>data</code>). <br /> <br />
+			This function will receive the list of arguments received from the user (argument <code>data</code>). <br /> <br />
 
-			It should validate and perhaps format (for later use by <code>set()</code>) the data. <br />
+			It should validate and perhaps format (for later use by <code>set(<i>data</i>)</code>) the data. <br />
 			Any error found during validation should be handled as per <a href="#error-handling">Error Handling</a> <br /> <br />
+
+			For example, if the user gives these arguments:
+
+			<pre class="language-bash"><code>
+$ settingsctl set hello.world.example -- abc=xyz -k --po ~ '~' 20
+			</pre></code>
+
+			the function will get:
+
+			<pre class="language-python"><code>
+['abc=xyz', '-k', '--po', '/home/username', '~', '20']
+			</pre></code>
+
 
 			It can also just return the data passed to it if no such validation or formatting is needed.<br />
 
