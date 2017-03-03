@@ -2,18 +2,18 @@
 
 A cross-desktop (\*nix) tool to handle desktop settings.
 
+See [the website](https://bharadwaj-raju.github.io/settingsctl/).
+
 **Examples:**
 
-    $ settingsctl list desktop.monitors
-	1
-
-	$ settingsctl get desktop.monitors.1.wallpaper
+	$ settingsctl get appearance.desktop.wallpaper
 	/path/to/wallpaper
 
 	$ settingsctl get power.screen-lock.enabled
 	true
 
 	$ settingsctl set power.screen-lock.timeout 20
+
 
 (All units in SI, so 5 → 5 seconds)
 
@@ -24,9 +24,7 @@ Intended as a replacement for `xdg-settings` which is a [joke](#why-not-xdg-sett
 
 `settingsctl [set|get] [setting]`
 
-`settingsctl` has three main commands: `get`, `set` and `list`.
-
-A "setting" here is a specific setting of the desktop (see: [list of them](#settings-list)).
+A "setting" here is a specific setting of the desktop.
 
 A "setting"'s format is `category.subcategory.option`
 
