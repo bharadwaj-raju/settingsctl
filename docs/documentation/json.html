@@ -1,0 +1,146 @@
+<!doctype html>
+<html>
+<head>
+	<title>Docs::JSON Output - settingsctl</title>
+	<link rel="stylesheet" type="text/css" href="../resources/style.css">
+	<meta charset="utf-8">
+	<link href="../resources/prism.css" rel="stylesheet" />
+</head>
+<body>
+	<script src="../resources/prism.js"></script>
+	<div id="header">
+		<a href="../"><img src="../resources/logo.png" alt="settingsctl" title="settingsctl"/></a>
+		<br />
+		<span id="headerSubtitle">cross-desktop settings tool for *nix</span>
+	</div>
+
+	<div id="menu">
+		<span class="left">
+		<a href="../">home</a>
+		<a class="thisSite" href="../documentation/">docs</a>
+		<a href="https://github.com/bharadwaj-raju/settingsctl">code</a>
+		<a href="../documentation/install.html">install</a>
+		</span>
+	</div>
+
+	<div id="content">
+		<div id="nav">
+			<ul>
+			<li><a href="../documentation">docs</a></li>
+			<li><a href="../documentation/tutorial.html">tutorial</a></li>
+			<li><a href="../documentation/install.html">installation</a></li>
+			<li><a href="../documentation/faq.html">faq</a></li>
+			<li><a href="../documentation/settings.html">settings</a></li>
+			<li><a href="../documentation/creating-a-setting.html">creating a setting</a></li>
+			<li><a href="../documentation/json.html" class="thisPage">json output</a></li>
+			<li><a href="../documentation/monitor.html">monitor a setting</a></li>
+			<li><a href="../documentation/settings-lib.html">settings lib</a></li>
+			</ul>
+				</div>
+
+		<div id="main">
+			<h2 id="overview">Overview</h2>
+			This page will describe the optional JSON output format of settingsctl.
+
+			For ease of later processing, all settingsctl commands accept a <code>--json</code> option. <br /> <br />
+
+			This option causes the information to be outputted in a JSON format instead of a nice-looking
+			human-readable format which can be hard to process in programs. <br />
+
+			<br />
+
+			<h2 id="example-json-outputs">Example JSON ouputs for different commands</h2>
+
+			<br />
+
+			<h3 id="set">set</h3>
+
+			For <code>settingsctl set hello.world.example Hello World</code>:
+
+			<pre><code class="language-python">
+{
+    "setting": "hello.world.example",
+	"value": "Hello World",
+	"value-raw": ["Hello", "World"]
+}
+			</pre></code>
+
+			where <code>"value"</code> is the validated and formatted version
+			returned by the setting, and <code>"value-raw"</code> is the raw list of arguments given by the user.
+
+			<br />
+
+			<h3 id="get">get</h3>
+
+			For <code>settingsctl get hello.world.example</code>:
+
+			<pre><code class="language-python">
+{
+    "setting": "hello.world.example",
+	"value": "Hello World"
+}
+			</pre></code>
+
+			<br />
+
+			<h3 id="tree">tree</h3>
+
+			For <code>settingsctl tree hello</code>:
+
+			<pre><code class="language-python">
+{
+	"world/": {
+	    "example": ""
+	},
+
+	"foo/": {
+	    "bar": ""
+	}
+}
+			</pre></code>
+
+			<br />
+
+			<h3 id="info">info</h3>
+
+			For <code>settingsctl info hello.world.example</code>:
+
+			<pre><code class="language-python">
+{
+	"setting": "hello.world.example",
+    "type": "string",
+	"description": "An example setting. Takes a string."
+}
+			</pre></code>
+
+			<br />
+
+			<h3 id="list">list</h3>
+
+			For <code>settingsctl list hello</code>:
+
+			<pre><code class="language-python">
+["world/", "bar/"]
+			</pre></code>
+
+			<h3 id="monitor">monitor</h3>
+
+			For <code>settingsctl monitor hello</code>:
+
+			<pre><code class="language-python">
+{
+    "setting": "hello.world.example",
+	"value": "Hello World",
+	"value-raw": ["Hello", "World"]
+}
+{
+	"setting": "hello.foo.bar",
+	"value": "Example",
+	"value-raw": ["Example"]
+}
+			</pre></code>
+
+
+	</div>
+	</div>
+</body>

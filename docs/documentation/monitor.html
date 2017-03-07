@@ -1,0 +1,94 @@
+<!doctype html>
+<html>
+<head>
+	<title>Docs::JSON Output - settingsctl</title>
+	<link rel="stylesheet" type="text/css" href="../resources/style.css">
+	<meta charset="utf-8">
+	<link href="../resources/prism.css" rel="stylesheet" />
+</head>
+<body>
+	<script src="../resources/prism.js"></script>
+	<div id="header">
+		<a href="../"><img src="../resources/logo.png" alt="settingsctl" title="settingsctl"/></a>
+		<br />
+		<span id="headerSubtitle">cross-desktop settings tool for *nix</span>
+	</div>
+
+	<div id="menu">
+		<span class="left">
+		<a href="../">home</a>
+		<a class="thisSite" href="../documentation/">docs</a>
+		<a href="https://github.com/bharadwaj-raju/settingsctl">code</a>
+		<a href="../documentation/install.html">install</a>
+		</span>
+	</div>
+
+	<div id="content">
+		<div id="nav">
+			<ul>
+			<li><a href="../documentation">docs</a></li>
+			<li><a href="../documentation/tutorial.html">tutorial</a></li>
+			<li><a href="../documentation/install.html">installation</a></li>
+			<li><a href="../documentation/faq.html">faq</a></li>
+			<li><a href="../documentation/settings.html">settings</a></li>
+			<li><a href="../documentation/creating-a-setting.html">creating a setting</a></li>
+			<li><a href="../documentation/json.html">json output</a></li>
+			<li><a href="../documentation/monitor.html" class="thisPage">monitor a setting</a></li>
+			<li><a href="../documentation/settings-lib.html">settings lib</a></li>
+			</ul>
+				</div>
+
+		<div id="main">
+			<h2 id="overview">Overview</h2>
+			This page will describe the <code>monitor</code> tool of settingsctl. <br /> <br />
+
+			The <code>monitor</code> command will monitor a setting for changes made via settingsctl. <br /> <br />
+
+			<h2 id="examples">Examples</h2>
+
+			<br />
+
+			For <code>settingsctl monitor hello</code>:
+
+			<pre><code class="language-bash">
+hello.world.example → Hello World
+hello.foo.bar → Example
+			</pre></code>
+
+			<br />
+
+			For <code>settingsctl monitor hello --json</code>:
+
+			<pre><code class="language-python">
+{
+    "setting": "hello.world.example",
+	"value": "Hello World",
+	"value-raw": ["Hello", "World"]
+}
+{
+	"setting": "hello.foo.bar",
+	"value": "Example",
+	"value-raw": ["Example"]
+}
+			</pre></code>
+
+			<br />
+
+			<h2 id="techincal-explanation">Technical Explanation (How It Works)</h2>
+
+			<br />
+
+			For each time a setting is <code>set</code>, the JSON is dumped into a <code>SETTINGSCTL_IPC.json</code> file
+			in the runtime/tmp directory. <br /> <br />
+
+			Then, a socket connection (<code>SETTINGSCTL_IPC.socket</code>) is established with the monitor session. <br /> <br />
+
+			Each time a setting is set, a 'SET' instruction is sent via the socket, which causes the monitor session
+			to print out the data.
+
+
+
+
+	</div>
+	</div>
+</body>

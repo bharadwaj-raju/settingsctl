@@ -32,6 +32,8 @@
 			<li><a href="../documentation/faq.html">faq</a></li>
 			<li><a href="../documentation/settings.html">settings</a></li>
 			<li><a href="../documentation/creating-a-setting.html" class="thisPage">creating a setting</a></li>
+			<li><a href="../documentation/json.html">json output</a></li>
+			<li><a href="../documentation/monitor.html">monitor a setting</a></li>
 			<li><a href="../documentation/settings-lib.html">settings lib</a></li>
 			</ul>
 				</div>
@@ -47,7 +49,11 @@
 			which will be a subdirectory of the lib. <br /> <br />
 
 			The settings file must define a <code>settings</code> string, and the functions
-			<code>format_set(data)</code>, <code>get()</code>, <code>get_type()</code> and <code>set(data)</code>. <br /> <br />
+			<code>format_set(data)</code>, <code>get()</code>, <code>info()</code> and <code>set(data)</code>. <br /> <br />
+
+			The setting must handle <a href="#error-msg-handling">errors, warnings and messages in the standard way.</a> <br /> <br />
+
+			There are also optional things to define. <br /> <br />
 
 			Of course, <em>inclusion</em> of your setting into the settingsctl lib would require you
 			to <a href="https://github.com/bharadwaj-raju/settingsctl/issues/new">file an issue</a>. <br />
@@ -77,7 +83,7 @@ setting = 'hello.world.example'
 			This function will receive the list of arguments received from the user (argument <code>data</code>). <br /> <br />
 
 			It should validate and perhaps format (for later use by <code>set(<i>data</i>)</code>) the data. <br />
-			Any error found during validation should be handled as per <a href="#error-handling">Error Handling</a> <br /> <br />
+			Any error found during validation should be handled as per <a href="#error-msg-handling">Error Handling</a> <br /> <br />
 
 			For example, if the user gives these arguments:
 
@@ -104,17 +110,17 @@ $ settingsctl set hello.world.example -- abc=xyz -k --po ~ '~' 20
 
 			<br />
 
-			<h3 id="get-type-func"><code>get_type()</code></h3>
+			<h3 id="info-func"><code>info()</code></h3>
 
-			This will return the type and description of the data you'll get from the user. <br /> <br />
+			This will return the type of data and description of the setting. <br /> <br />
 
 			It should return a dictionary:
 
 			<pre><code class="language-python">
 return {
-         'type': 'TYPE (one of "string", "integer", "decimal" or "list")',
-         'description': 'DESCRIPTION of the data (example: "list of files")'
-       }
+         'type': 'TYPE (one of "string", "integer", "decimal", "boolean" or "list")',
+		 'description': 'DESCRIPTION'
+        }
 			</pre></code>
 
 			<br />
@@ -127,16 +133,55 @@ return {
 
 			<br /> <br />
 
-			<h2 id="error-handling">Error Handling</h2>
+			<h2 id="error-msg-handling">Error and Message Handling</h2>
 
-			Any errors must be handled as:
+			<em>Nothing must be printed!</em> <br /> <br />
+
+			Any errors and messages must be handled through the <code>message()</code> function, which is made available by settingsctl:
 
 			<pre class="language-python"><code>
-print('{name}: error message')
+message('error message', level='error')
 			</pre></code>
 
-			where <code>{name}</code> should be replaced with your setting's name as defined in
-			the <a href="#setting-str"><code>setting</code></a> variable.
+			where <code>error message</code> should be replaced with the error. <br />
+
+			You can also use <code>level='info'</code> or <code>level='warning'</code>
+
+			In case of errors, exit with code <code>1</code>:
+
+			<pre><code class="language-python">
+sys.exit(1)
+			</pre></code>
+
+
+			<br /> <br />
+
+			<h2 id="may-define">What a setting <em>may</em> define</h2>
+
+			There are also various <em>options</em> that may be defined in a setting.
+
+			<br />
+
+			<h3 id="read-only-opt">The <code>read_only</code> option</h3>
+
+			The <code>read_only</code> variable, if defined, causes the setting to become read-only. <br /><br />
+
+			Read-only settings are not required to define <a href="format-set-func"><code>format_set(<i>data</i>)</code></a>
+			or <a href="set-func"><code>set(<i>data</i>)</code></a> functions. <br />
+
+			settingsctl will error out on an attempt to set a read-only setting. <br /><br />
+
+			Example:
+
+			<pre class="language-python"><code>
+read_only = True
+			</pre></code>
+
+			Read-only settings are useful for things which cannot be changed, like the <code>display.monitors</code> listing. <br />
+
+			<br />
+
+
 
 
 	</div>

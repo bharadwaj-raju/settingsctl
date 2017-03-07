@@ -15,16 +15,16 @@ See [the website](https://bharadwaj-raju.github.io/settingsctl/).
 	$ settingsctl set power.screen-lock.timeout 20
 
 
-(All units in SI, so 5 → 5 seconds)
-
 Intended as a replacement for `xdg-settings` which is a [joke](#why-not-xdg-settings).
 
 
 ## Usage
 
-`settingsctl [set|get] [setting]`
+`settingsctl [command] [setting] [--json]`
 
 A "setting" here is a specific setting of the desktop.
+
+`--json` causes the output to be in JSON format.
 
 A "setting"'s format is `category.subcategory.option`
 

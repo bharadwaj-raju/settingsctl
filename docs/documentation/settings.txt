@@ -1,0 +1,53 @@
+appearance/
+
+	desktop/
+
+		wallpaper - Wallpaper for each monitor in order
+
+		workspaces - Workspaces on the desktop
+
+	theme/
+
+		gtk/
+			gtk-2 - GTK+ 2 theme
+			gtk-3 - GTK+ 3 theme
+
+		kde/
+			look-and-feel - KDE desktop style
+			widget-style - KDE widget style
+
+		wm - Window manager
+
+		icon - Icon theme
+
+		mouse - X11 mouse pointer
+
+power/
+
+	screen-lock/
+
+		enabled - Is the screen lock enabled?
+
+		timeout - The timeout for auto-lock
+
+		password-required - Is a password required?
+
+display/
+
+	monitors [read-only] - The monitors connected
+
+	resolution - Resolution for the monitors
+
+	orientation - Display orientation
+
+	refresh-rate - The monitor refresh rate
+
+
+
+platform-specific/
+
+
+
+
+
+

@@ -1,10 +1,10 @@
 <!doctype html>
 <html>
 <head>
-	<title>Docs::Installation - settingsctl</title>
+	<title>Docs::Settings - settingsctl</title>
 	<link rel="stylesheet" type="text/css" href="../resources/style.css">
-	<link rel="stylesheet" type="text/css" href="../resources/prism.css"
 	<meta charset="utf-8">
+	<link href="../resources/prism.css" rel="stylesheet" />
 </head>
 <body>
 	<script src="../resources/prism.js"></script>
@@ -17,9 +17,9 @@
 	<div id="menu">
 		<span class="left">
 		<a href="../">home</a>
-		<a href="../documentation/">docs</a>
+		<a class="thisSite" href="../documentation/">docs</a>
 		<a href="https://github.com/bharadwaj-raju/settingsctl">code</a>
-		<a class="thisSite" href="../documentation/install.html">install</a>
+		<a href="../documentation/install.html">install</a>
 		</span>
 	</div>
 
@@ -28,9 +28,9 @@
 			<ul>
 			<li><a href="../documentation">docs</a></li>
 			<li><a href="../documentation/tutorial.html">tutorial</a></li>
-			<li><a href="../documentation/install.html" class="thisPage">installation</a></li>
+			<li><a href="../documentation/install.html">installation</a></li>
 			<li><a href="../documentation/faq.html">faq</a></li>
-			<li><a href="../documentation/settings.html">settings</a></li>
+			<li><a href="../documentation/settings.html" class="thisPage">settings</a></li>
 			<li><a href="../documentation/creating-a-setting.html">creating a setting</a></li>
 			<li><a href="../documentation/json.html">json output</a></li>
 			<li><a href="../documentation/monitor.html">monitor a setting</a></li>
@@ -38,20 +38,30 @@
 			</ul>
 				</div>
 
-		<div id="main" class="language-bash">
-			<h2 >Installation</h2>
-			<ol>
-				<li>Get the <a href="https://github.com/bharadwaj-raju/settingsctl">code</a>. </li> <br />
-				<li>Run the included script:
-					<pre><code>
-$ sudo sh install.sh
-					</pre></code></li>
-			</ol>
+		<div id="main">
+			<h2 id="overview">Overview</h2>
 
-			Now you should be able to run <code>settingsctl</code>. <br /> <br />
+			This page will describe the different settings available to settingsctl. <br /> <br />
 
-			Alternatively, you can run the included Python script <code>settingsctl</code> as-is from
-			within the code directory: <code>python3 ./settingsctl</code>.
+			New settings may be added now and then. <br />
+			Updates will be listed at the <a href="../updates.html">Updates</a> page. <br /> <br />
+
+			<h2 id="settings">Settings</h2>
+
+			<ul>
+				<li>
+					appearance
+					<ul>
+						<li>
+							desktop
+							<ul>
+								<li>wallpaper - wallpapers for each monitor in order.</li>
+							</ul>
+						</li>
+
+					</ul>
+				</li>
+			</ul>
 
 	</div>
 	</div>

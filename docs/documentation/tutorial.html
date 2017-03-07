@@ -32,6 +32,8 @@
 			<li><a href="../documentation/faq.html">faq</a></li>
 			<li><a href="../documentation/settings.html">settings</a></li>
 			<li><a href="../documentation/creating-a-setting.html">creating a setting</a></li>
+			<li><a href="../documentation/json.html">json output</a></li>
+			<li><a href="../documentation/monitor.html">monitor a setting</a></li>
 			<li><a href="../documentation/settings-lib.html">settings lib</a></li>
 			</ul>
 				</div>
@@ -56,33 +58,50 @@ $ settingsctl get appearance.desktop.wallpaper
 
 			This should return the wallpaper (or more than one, if multi-monitor) you set.
 
-			<h3>Getting types</h3>
+			<h3>Getting info</h3>
 
-			You can get the data type of a setting through the <code>get-type</code> command.
+			You can get information about a setting through the <code>info</code> command.
 			There may be further explanation on the next line.
 
 			<pre class="language-bash"><code>
-$ settingsctl get-type appearance.desktop.wallpaper
-string
-file path
+$ settingsctl info appearance.desktop.wallpaper
+string, string
 
-$ settingsctl get-type power.screen-lock.timeout
+desktop wallpaper
+
+$ settingsctl info power.screen-lock.timeout
 integer
-seconds
 
-$ settingsctl get-type power.screen-lock.is-enabled
+timeout till screen locks itself
+
+$ settingsctl info power.screen-lock.is-enabled
 boolean
+
+is the screen lock enabled?
 			</pre></code>
 
 			<h2>Setting</h2>
 
-			You can set a setting throught the <code>set</code> command.
+			You can set a setting through the <code>set</code> command.
 
 			<pre class="language-bash"><code>
 $ settingsctl set appearance.desktop.wallpaper /path/to/new/wallpaper 1
 			</pre></code>
 
 			This should change your wallpaper on monitor 1 to <code>/path/to/new/wallpaper</code>.
+
+			<h2>Listing possibilites</h2>
+
+			You can list all possibilites or options of a setting through the <code>list-all</code> command.
+
+			<pre class="language-bash"><code>
+$ settingsctl list-all display.monitors
+VGA1
+Projector1
+			</pre></code>
+
+			This should change your wallpaper on monitor 1 to <code>/path/to/new/wallpaper</code>.
+
 
 			<h2>Listing</h2>
 
@@ -111,6 +130,10 @@ appearance/
 		wallpaper
 ...
 		</pre></code>
+
+			<h2>Monitor a setting for changes</h2>
+
+			See <a href="../documentation/monitor.html">monitor a setting</a>.
 
 		</div>
 	</div>
