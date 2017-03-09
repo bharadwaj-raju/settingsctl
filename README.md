@@ -7,18 +7,18 @@ settingsctl is a cross-desktop (\*nix) tool to handle desktop settings.
 
 This was *also* the aim of `xdg-settings`. [But xdg-settings doesn't really work](#why-not-xdg-settings).
 
-For more information (and the documentation) see [the website](web).
+For more information (and the documentation) see [the https://bharadwaj-raju.github.io/settingsctlsite](web).
 
 
 ## Getting started
 
-Ensure you have [Python 3](python). You should probably already have it!
+Ensure you have [Python 3](https://python.org). You should probably already have it!
 
-1. Download settingsctl [here (zip)](zip-dl)
+1. Download settingsctl [here (zip)](https://github.com/bharadwaj-raju/settingsctl/archive/master.zip)
 
 2. Either:
-	a. Install settingsctl system-wide (`sudo sh install.sh`)
-	b. Or just run it (`./settingsctl --help`)
+	1. Install settingsctl system-wide (`sudo sh install.sh`)
+	2. Or just run it (`./settingsctl --help`)
 
 ### Examples:
 
@@ -34,9 +34,9 @@ Ensure you have [Python 3](python). You should probably already have it!
 ## Features
 
 - Support for nearly every setting you may find in a desktop environment's settings.
-- Support for nearly every desktop environment (Yours isn't? [File an issue!](new-issue))
+- Support for nearly every desktop environment (Yours isn't? [File an issue!](https://github.com/bharadwaj-raju/settingsctl/issues/new))
 - Support for JSON output format for easy parsing
-- Extensive [documentation](docs)
+- Extensive [documentation](https://bharadwaj-raju.github.io/settingsctl/documentation)
 
 
 ## Contributing
@@ -45,13 +45,13 @@ Ensure you have [Python 3](python). You should probably already have it!
 
 Firstly, the language: settingsctl is written in Python 3.
 
-The coding conventions are mainly [PEP8](pep8), but with one notable exception: Tabs are used instead of spaces.
+The coding conventions are mainly [PEP8](https://pep8.org), but with one notable exception: Tabs are used instead of spaces.
 
 ### Contributing a setting
 
 1. Fork the repository.
 
-2. See [Documentation::Creating a Setting](docs-create-setting).
+2. See [Documentation::Creating a Setting](https://bharadwaj-raju.github.io/settingsctl/documentation-create-setting).
 
 3. Then [file a pull request](file-pr) for your change.
 
@@ -61,7 +61,7 @@ The coding conventions are mainly [PEP8](pep8), but with one notable exception: 
 
 2. Look through the code (file: `settingsctl`).
 
-3. Then [file a pull request](new-pr) for your change.
+3. Then [file a pull request](https://github.com/bharadwaj-raju/settingsctl/compare) for your change.
 
 
 ## License
@@ -80,15 +80,3 @@ For the license text, see the included LICENSE file.
 2. It supports only *two* settings: default browser and URL scheme handler
 
 This project hopes to eventually *officially* (as in approved by XDG as a standard) replace the old `xdg-settings`.
-
-[web]: https://bharadwaj-raju.github.io/settingsctl/
-[docs]: https://bharadwaj-raju.github.io/settingsctl/documentation/
-[pep8]: https://pep8.org
-[new-issue]: https://github.com/bharadwaj-raju/settingsctl/issues/new
-[new-pr]: https://github.com/bharadwaj-raju/settingsctl/compare
-[python]: https://python.org
-[zip-dl]: https://github.com/bharadwaj-raju/settingsctl/archive/master.zip
-[docs-settingsctl]: https://bharadwaj-raju.github.io/settingsctl/documentation/developing-settingsctl.html
-[docs-create-setting]: https://bharadwaj-raju.github.io/settingsctl/documentation/creating-a-setting.html
-
-
