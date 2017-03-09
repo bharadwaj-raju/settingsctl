@@ -12,7 +12,7 @@ For more information (and the documentation) see [the website](https://bharadwaj
 
 ## Getting started
 
-Ensure you have [Python 3](https://python.org). You should probably already have it!
+Ensure you have [Python 3](https://python.org). You probably already have it.
 
 1. Download settingsctl [here (zip)](https://github.com/bharadwaj-raju/settingsctl/archive/master.zip)
 
@@ -29,6 +29,8 @@ Ensure you have [Python 3](https://python.org). You should probably already have
 	true
 
 	$ settingsctl set power.screen-lock.timeout 20
+
+Also see [Documentation::Tutorial](https://bharadwaj-raju.github.io/settingsctl/documentation/tutorial.html)
 
 
 ## Features
