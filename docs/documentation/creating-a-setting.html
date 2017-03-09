@@ -118,10 +118,24 @@ $ settingsctl set hello.world.example -- abc=xyz -k --po ~ '~' 20
 
 			<pre><code class="language-python">
 return {
-         'type': 'TYPE (one of "string", "integer", "decimal", "boolean" or "list")',
-		 'description': 'DESCRIPTION'
+         'type': ['data', 'types', 'go', 'here'],
+		 'description': 'Short description of the setting',
+		 'data': ['Short', 'descriptions', 'of', 'data'],
         }
 			</pre></code>
+
+			Where the data types in the <code>'type'</code> list are one of:
+
+			<div class="language-python">
+
+			<ul>
+				<li>string -- Python <code>str</code></li>
+				<li>boolean -- Python <code>bool</code></li>
+				<li>decimal -- Python <code>float</code></li>
+				<li>list -- Python <code>list</code></li>
+				<li>integer -- Python <code>int</code></li>
+			<ul>
+			</div>
 
 			<br />
 
@@ -176,6 +190,7 @@ sys.exit(1)
 			<pre class="language-python"><code>
 read_only = True
 			</pre></code>
+
 
 			Read-only settings are useful for things which cannot be changed, like the <code>display.monitors</code> listing. <br />
 

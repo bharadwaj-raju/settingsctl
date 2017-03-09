@@ -37,8 +37,9 @@ def format_set(data):
 def info():
 
 	return {
-				'type': ['string', 'string'],
-				'description': 'the file path to the wallpaper; monitor ID'
+				'type': ['string'],
+				'description': 'The current desktop background/wallpaper',
+				'data': ['file path to the wallpaper'],
 			}
 
 def set(data):

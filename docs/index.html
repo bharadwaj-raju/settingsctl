@@ -25,8 +25,11 @@
 
 	<div id="content" class="language-none">
 		<div id="nav">
-			<ul><li></li></ul>
-		</div>
+			<ul>
+				<li><a class="thisPage" href="/settingsctl">home</a></li>
+				<li><a href="updates.html">updates</a></li>
+			</ul>
+			</div>
 		<div id="main">
 		<p>A cross-desktop (*nix) tool to handle desktop settings.</p>
 
@@ -52,7 +55,7 @@ $ settingsctl set power.screen-lock.timeout 20
 
 		<p><code>settingsctl [set|get] [setting]</code></p>
 
-		<p><code>settingsctl</code> has three main commands: <code>get</code>, <code>set</code> and <code>list</code>.</p>
+		<p><code>settingsctl</code> has two main commands: <code>get</code> and <code>set</code>, in addition to other commands.</p>
 
 		<p>A "setting" here is a specific setting of the desktop (see: <a href="documentation/settings.html">list of them</a>).</p>
 

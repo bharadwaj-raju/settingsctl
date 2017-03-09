@@ -65,19 +65,25 @@ $ settingsctl get appearance.desktop.wallpaper
 
 			<pre class="language-bash"><code>
 $ settingsctl info appearance.desktop.wallpaper
-string, string
+string
 
-desktop wallpaper
+Description: The current desktop wallpaper
+
+Data: file path to the wallpaper
 
 $ settingsctl info power.screen-lock.timeout
 integer
 
-timeout till screen locks itself
+Description: The timeout till the screen locks itself
+
+Data: timeout in seconds
 
 $ settingsctl info power.screen-lock.is-enabled
 boolean
 
-is the screen lock enabled?
+Description: Is the screen lock enabled?
+
+Data: whether it is enabled
 			</pre></code>
 
 			<h2>Setting</h2>
@@ -99,8 +105,6 @@ $ settingsctl list-all display.monitors
 VGA1
 Projector1
 			</pre></code>
-
-			This should change your wallpaper on monitor 1 to <code>/path/to/new/wallpaper</code>.
 
 
 			<h2>Listing</h2>

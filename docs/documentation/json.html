@@ -49,7 +49,7 @@
 
 			<br />
 
-			<h2 id="example-json-outputs">Example JSON ouputs for different commands</h2>
+			<h2 id="example-json-outputs">Example JSON outputs for different commands</h2>
 
 			<br />
 
@@ -108,8 +108,10 @@
 			<pre><code class="language-python">
 {
 	"setting": "hello.world.example",
-    "type": "string",
-	"description": "An example setting. Takes a string."
+    "type": ["string"],
+	"description": "An example setting",
+	"data": ["Example string"],
+	"read-only": false
 }
 			</pre></code>
 

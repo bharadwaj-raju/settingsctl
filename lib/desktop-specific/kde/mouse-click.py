@@ -40,8 +40,8 @@ def info():
 
 	return {
 				'type': ['string'],
-				'description': ('Set whether to use single or double click to open files and folders in KDE.\n'
-								'value must be one of "single" or "double"')
+				'description': 'Whether to use single or double click to open files and folders in KDE',
+				'data': ['must be one of "single" or "double"'],
 			}
 
 def set(data):

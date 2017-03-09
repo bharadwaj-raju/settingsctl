@@ -39,7 +39,8 @@ def info():
 
 	return {
 				'type': ['string'],
-				'description': 'the theme name'
+				'description': 'The current theme for GTK+ 2 applications',
+				'data': ['name of the theme'],
 			}
 
 def set(data):

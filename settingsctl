@@ -33,19 +33,23 @@ import uuid
 
 __version__ = '0.0.1'
 
+
 if os.path.isdir(os.environ.get('SETTINGSCTL_LIB', '')):
 	lib = os.environ.get('SETTINGSCTL_LIB')
 
 elif os.path.isdir('lib'):
 	lib = 'lib/'
 
+elif os.path.isdir(os.path.join(os.path.dirname(__file__), 'lib')):
+	lib = os.path.join(os.path.dirname(__file__), 'lib/')
+
 elif os.path.isdir('/usr/lib/settingsctl'):
 	lib = '/usr/lib/settingsctl/'
 
 else:
-	print(dedent('settingsctl: settingsctl settings library not found.\n\
+	print(dedent('''settingsctl: settingsctl settings library not found.\n
 		It should be included with the settingsctl distribution in lib/,\
-		see documentation "settingsctl lib" <https://bharadwaj-raju.github.io>'))
+		see documentation "settingsctl lib" <https://bharadwaj-raju.github.io>'''))
 
 # Inter-process Communication
 # for monitor command
@@ -271,11 +275,13 @@ class SettingsCtlCLI(object):
 
 		args = parser.parse_args(sys.argv[2:])
 
+		ls = [x.replace('.py', '') for x in os.listdir(os.path.join(lib, args.setting))]
+
 		if args.json:
-			print(json.dumps(os.listdir(os.path.join(lib, args.setting))))
+			print(json.dumps(ls))
 
 		else:
-			print('\n'.join(os.listdir(os.path.join(lib, args.setting))))
+			print('\n'.join(ls))
 
 
 	def monitor(self):
@@ -326,7 +332,7 @@ class SettingsCtlCLI(object):
 						message_json = json.load(f)
 
 					if args.setting:
-						if message_json['setting'] == args.setting:
+						if message_json['setting'].startswith(args.setting):
 							if args.json:
 								print(json.dumps(message_json, indent=4))
 
@@ -354,7 +360,7 @@ class SettingsCtlCLI(object):
 								Options:
 								  setting		the setting to tree
 								  --max-depth	the maximum depth of the tree. default = infinity
-								  --json		 whether to display output in JSON form
+								  --json		whether to display output in JSON form
 								''')
 							)
 						)
@@ -386,7 +392,13 @@ class SettingsCtlCLI(object):
 
 		parser.set_help(HELP_BOILERPLATE.format(
 							usage=parser.format_usage(),
-							options_etc='Arguments:\n  setting		the setting to get the info of'
+							options_etc=dedent('''\
+								Arguments:
+								  setting		the setting to get info about
+
+								Options:
+								  --json		whether to display output in JSON form
+								''')
 							)
 						)
 
@@ -398,24 +410,42 @@ class SettingsCtlCLI(object):
 
 		module = get_setting_module(args.setting)
 
+		data = module.info()
+
+		try:
+			if module.read_only:
+				data['read-only'] = module.read_only
+
+		except AttributeError:
+			data['read-only'] = False
+
 		if args.json:
-			print(json.dumps(module.info(), indent=4))
+			print(json.dumps(data, indent=4))
 
 		else:
-			print(', '.join(module.info()['type']), '\n')
-			print(module.info()['description'])
+			print(', '.join(data['type']), '\n')
+			print('Description:', data['description'], '\n')
+			print('Data description:', ', '.join(data['data']), '\n')
+			print('Read-only:', data['read-only'])
 
 	def list_all(self):
 
 		parser = SubArgumentParser(
 					description='List all choices of a setting (may not be applicable to all settings)',
-					usage='settingsctl list-all <setting>')
+					usage='settingsctl list-all <setting> [--json]')
 
 		parser.add_argument('setting', type=str)
+		parser.add_argument('--json', action='store_true')
 
 		parser.set_help(HELP_BOILERPLATE.format(
 							usage=parser.format_usage(),
-							options_etc='Arguments:\n  setting		the setting to list choices of'
+							options_etc=dedent('''\
+								Arguments:
+								  setting		the setting to get info about
+
+								Options:
+								  --json		whether to display output in JSON form
+								''')
 							)
 						)
 
@@ -428,21 +458,38 @@ class SettingsCtlCLI(object):
 
 		module = get_setting_module(args.setting)
 
+		try:
+			ls = module.list_all()
+
+		except AttributeError:
+			if args.json:
+				print(json.dumps({
+									'setting': args.setting,
+									'message': 'list-all is not applicable for this setting',
+									'level': 'error'
+								}, indent=4))
+
+				sys.exit(1)
+
+			else:
+				print('{name}: error: list-all is not applicable for this setting.'.format(name=args.setting))
+				sys.exit(1)
+
 		if args.json:
 			print(json.dumps({
 								'setting': args.setting,
-								'value': module.list_all()
-							}))
+								'value': ls
+							}, indent=4))
 
 		else:
-			print('\n'.join(module.list_all()))
+			print('\n'.join(ls))
 
 
 	def get(self):
 
 		parser = SubArgumentParser(
 					description='Get a setting',
-					usage='settingsctl get <setting>')
+					usage='settingsctl get <setting> [--json]')
 
 		parser.set_help(HELP_BOILERPLATE.format(
 							usage=parser.format_usage(),
@@ -480,7 +527,7 @@ class SettingsCtlCLI(object):
 
 		parser = SubArgumentParser(
 					description='Set a setting',
-					usage='settingsctl set <setting> <value>')
+					usage='settingsctl set <setting> <value> [--json]')
 
 		parser.set_help(HELP_BOILERPLATE.format(
 							usage=parser.format_usage(),

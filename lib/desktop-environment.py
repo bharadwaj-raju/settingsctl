@@ -31,7 +31,8 @@ def info():
 
 	return {
 			'type': ['string'],
-			'description': 'the desktop environment name'
+			'description': 'The running desktop environment or window manager',
+			'data': ['the name of the desktop environment'],
 			}
 
 def get():
