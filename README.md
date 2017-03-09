@@ -7,7 +7,7 @@ settingsctl is a cross-desktop (\*nix) tool to handle desktop settings.
 
 This was *also* the aim of `xdg-settings`. [But xdg-settings doesn't really work](#why-not-xdg-settings).
 
-For more information (and the documentation) see [the https://bharadwaj-raju.github.io/settingsctlsite](web).
+For more information (and the documentation) see [the website](https://bharadwaj-raju.github.io/settingsctl).
 
 
 ## Getting started
@@ -51,7 +51,7 @@ The coding conventions are mainly [PEP8](https://pep8.org), but with one notable
 
 1. Fork the repository.
 
-2. See [Documentation::Creating a Setting](https://bharadwaj-raju.github.io/settingsctl/documentation-create-setting).
+2. See [Documentation::Creating a Setting](https://bharadwaj-raju.github.io/settingsctl/documentation/creating-a-setting.html).
 
 3. Then [file a pull request](file-pr) for your change.
 
