@@ -51,6 +51,7 @@ else:
 		It should be included with the settingsctl distribution in lib/,\
 		see documentation "settingsctl lib" <https://bharadwaj-raju.github.io>'''))
 
+
 # Inter-process Communication
 # for monitor command
 
@@ -521,6 +522,9 @@ class SettingsCtlCLI(object):
 					'setting': args.setting,
 					'value': module.get()
 					}, indent=4))
+
+		else:
+			print(module.get())
 
 
 	def set(self):

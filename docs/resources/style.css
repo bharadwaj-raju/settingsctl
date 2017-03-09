@@ -98,11 +98,11 @@ h4 {
 
 #nav {
 	background-color: #fff;
-	float: left top;
+	float: left;
 	margin: 0 1px 0 0;
 	padding: 1em 0;
 	width: 200px;
-	position: fixed;
+	height: 100%;
 }
 
 #nav ul {

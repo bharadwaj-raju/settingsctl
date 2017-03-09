@@ -34,7 +34,7 @@ Ensure you have [Python 3](https://python.org). You should probably already have
 ## Features
 
 - Support for nearly every setting you may find in a desktop environment's settings.
-- Support for nearly every desktop environment (Yours isn't? [File an issue!](https://github.com/bharadwaj-raju/settingsctl/issues/new))
+- Support for nearly every desktop environment (Yours isn't supported? [File an issue!](https://github.com/bharadwaj-raju/settingsctl/issues/new))
 - Support for JSON output format for easy parsing
 - Extensive [documentation](https://bharadwaj-raju.github.io/settingsctl/documentation)
 
@@ -45,7 +45,7 @@ Ensure you have [Python 3](https://python.org). You should probably already have
 
 Firstly, the language: settingsctl is written in Python 3.
 
-The coding conventions are mainly [PEP8](https://pep8.org), but with one notable exception: Tabs are used instead of spaces.
+The coding conventions are mainly [PEP8](http://pep8.org), but with one notable exception: Tabs are used instead of spaces.
 
 ### Contributing a setting
 
