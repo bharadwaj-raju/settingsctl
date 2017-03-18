@@ -1,0 +1,8 @@
+[MESSAGES CONTROL]
+
+disable=mixed-indentation,line-too-long,bad-continuation,missing-docstring,W0142,W0403,R0201,W0212,W0613,W0232,R0903,W0614,C0111,C0301,R0913,C0103,F0401,W0402,R0914,I0011,too-many-nested-blocks
+
+[BASIC]
+
+good-names=i,x,y,f
+

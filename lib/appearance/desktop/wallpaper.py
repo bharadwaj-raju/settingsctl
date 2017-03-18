@@ -42,7 +42,7 @@ def format_set(data):
 		print('{name}: cannot access "{file}": no such file.'.format(name=setting, file=data[0]))
 		sys.exit(1)
 
-	return data
+	return data[0]
 
 def info():
 
@@ -90,17 +90,26 @@ def get():
 
 	elif desktop_env == 'kde':
 		conf_file = os.path.join(config_dir, 'plasma-org.kde.plasma.desktop-appletsrc')
+
+		line_count = 0
+		line_found = 0
+
 		with open(conf_file) as f:
-			contents = f.read()
+			contents = f.read().splitlines()
 
-		contents = contents.splitlines()
+		for line in contents:
+			line_count += 1
 
-		contents = contents[
-			contents.index(
-			'[Containments][8][Wallpaper][org.kde.image][General]') + 1
-			].split('=', 1)
+			if '[Wallpaper]' in line and line.startswith('['):
+				line_found = int(line_count)
+				break
 
-		return contents[len(contents) - 1].strip().replace('file://', '')
+		if line_found != 0:
+			contents = contents[line_found:]
+
+			for line in contents:
+				if line.startswith('Image'):
+					return line.split('=', 1)[-1].strip().replace('file://', '').replace('"', '').replace("'", '')
 
 	elif desktop_env == 'xfce':
 		# XFCE4's image property is not image-path but last-image (What?)
@@ -254,15 +263,15 @@ def set(image):
 		kde_script = dedent(
 		'''\
 		var Desktops = desktops();
-		for (i=0;i<Desktops.length;i++) {{
+		for (i=0;i<Desktops.length;i++) {
 			d = Desktops[i];
 			d.wallpaperPlugin = "org.kde.image";
 			d.currentConfigGroup = Array("Wallpaper",
 										"org.kde.image",
 										"General");
-			d.writeConfig("Image", "file://{}")
-		}}
-		''').format(image)
+			d.writeConfig("Image", "file://%s");
+		}
+		''') % image
 
 		sp.Popen(
 				['dbus-send', '--session', '--dest=org.kde.plasmashell', '--type=method_call', '/PlasmaShell', 'org.kde.PlasmaShell.evaluateScript',

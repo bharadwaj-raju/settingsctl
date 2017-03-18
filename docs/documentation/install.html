@@ -39,20 +39,36 @@
 				</div>
 
 		<div id="main" class="language-bash">
-			<h2 >Installation</h2>
-			<ol>
-				<li>Get the <a href="https://github.com/bharadwaj-raju/settingsctl">code</a>. </li> <br />
-				<li>Run the included script:
-					<pre><code>
-$ sudo sh install.sh
-					</pre></code></li>
-			</ol>
+			<h2>Installation</h2>
 
-			Now you should be able to run <code>settingsctl</code>. <br /> <br />
+			First, get the code: <br /><br />
 
-			Alternatively, you can run the included Python script <code>settingsctl</code> as-is from
-			within the code directory: <code>python3 ./settingsctl</code>.
+			<a class="button" href="https://github.com/bharadwaj-raju/settingsctl/archive/master.zip">Download code (ZIP)</a> <br /> <br />
 
+			Extract it. Then, you can... <br /><br />
+
+			<h3>Install System-wide</h3>
+			Run:
+
+			<pre><code>
+$ sudo ./install.py
+			</pre></code>
+
+			<h3>Install For User</h3>
+			Run:
+
+			<pre><code>
+$ ./install.py --user
+			</pre></code>
+
+			<h3>Run Without Installing</h3>
+			This is what you should be doing if you want to develop on settingsctl. <br /><br />
+
+			Run:
+
+			<pre><code>
+$ ./settingsctl --help
+			</pre></code>
 	</div>
 	</div>
 </body>

@@ -25,7 +25,6 @@
 import os
 import sys
 import argparse
-import subprocess as sp
 import json
 from textwrap import dedent
 import socket
@@ -33,6 +32,10 @@ import uuid
 
 __version__ = '0.0.1'
 
+
+# -- Finding path to the settings lib (see Documentation::Settings Lib)
+
+# Order: $SETTINGCTL_LIB ./lib/ ~/.local/lib/settingsctl /usr/lib/settingsctl
 
 if os.path.isdir(os.environ.get('SETTINGSCTL_LIB', '')):
 	lib = os.environ.get('SETTINGSCTL_LIB')
@@ -43,16 +46,19 @@ elif os.path.isdir('lib'):
 elif os.path.isdir(os.path.join(os.path.dirname(__file__), 'lib')):
 	lib = os.path.join(os.path.dirname(__file__), 'lib/')
 
+elif os.path.isdir(os.path.expanduser('~/.local/lib/settingsctl')):
+	lib = os.path.expanduser('~/.local/lib/settingsctl')
+
 elif os.path.isdir('/usr/lib/settingsctl'):
 	lib = '/usr/lib/settingsctl/'
 
 else:
 	print(dedent('''settingsctl: settingsctl settings library not found.\n
 		It should be included with the settingsctl distribution in lib/,\
-		see documentation "settingsctl lib" <https://bharadwaj-raju.github.io>'''))
+		see Documentation::Settingsctl Lib" <https://bharadwaj-raju.github.io/settingsctl/documentation/settingsctl-lib.html>'''))
 
 
-# Inter-process Communication
+# -- Inter-process Communication
 # for monitor command
 
 if os.path.isdir(os.environ.get('XDG_RUNTIME_DIR')):
@@ -79,13 +85,13 @@ types_map = {
 
 # Generates a filesystem tree (as a dictionary) recursively
 
+global recursion_number  # This needs to modified later in fstree() → __tree()
+recursion_number = 0
+
 def fstree(dir_, maxdepth=None):
 
 	if maxdepth == 0:
 		maxdepth = None
-
-	global recursion_number  # This needs to modified later in __tree()
-	recursion_number = 0
 
 	def __tree(dir_):
 
@@ -112,11 +118,12 @@ def fstree(dir_, maxdepth=None):
 
 	return __tree(dir_)
 
+# -- Functions provided to all settings
 
 def module_message(message, level='info'):
 
 	msg = {
-				'setting': os.environ.get('SETTINGSCTL_USE_JSON', None),
+				'setting': os.environ.get('SETTINGSCTL_CURRENT_SETTING'),
 				'message': message,
 				'level': level
 			}
@@ -129,6 +136,9 @@ def module_message(message, level='info'):
 		sys.stderr.write('{setting}: {level}: {message}\n'.format_map(msg))
 		sys.stderr.flush()
 
+# -- Miscellaneous functions
+
+# Get a Python module from a dot-separated setting name
 
 def get_setting_module(setting):
 
@@ -145,9 +155,9 @@ def get_setting_module(setting):
 
 # Pretty-print a filesystem tree as provided by fstree()
 
-def pretty(d, indent=0):
+def pretty(tree, indent=0):
 
-	for key, value in d.items():
+	for key, value in tree.items():
 		print('	' * indent + str(key))
 
 		if isinstance(value, dict):
@@ -157,33 +167,7 @@ def pretty(d, indent=0):
 			print('	' * (indent+1) + str(value))
 
 
-class ArgumentParser(argparse.ArgumentParser):
-
-	def format_help(self):
-
-		return dedent('''\
-				usage: settingsctl command [args]
-
-				settingsctl — a cross-desktop settings tool
-
-				Commands:
-				  get		 get a setting's value
-				  set		 set a setting's value
-				  list	     list settings
-				  tree	     hierarchial tree of settings
-				  info       get information about a setting
-				  monitor    monitor for changes made via settingsctl
-				  list-all   list all possible choices for a setting (may not be applicable to all settings)
-
-				Options:
-				  --help	 print this help message, and exit
-				  --version  print version and legal information, and exit
-
-				Manual page: settingsctl(1)
-				Report bugs at: <https://github.com/bharadwaj-raju/settingsctl/issues/new>
-				settingsctl home page: <https://bharadwaj-raju.github.io/settingsctl>
-				Full documentation: <https://bharadwaj-raju.github.io/settingsctl/documentation>
-				''')
+# -- Main settingsctl CLI interface (arguments etc)
 
 HELP_BOILERPLATE = dedent('''\
 		usage: {usage}
@@ -192,14 +176,13 @@ HELP_BOILERPLATE = dedent('''\
 
 		{options_etc}
 
-		Manual page: settingsctl(1)
 		Report bugs at: <https://github.com/bharadwaj-raju/settingsctl/issues/new>
 		settingsctl home page: <https://bharadwaj-raju.github.io/settingsctl>
 		Full documentation: <https://bharadwaj-raju.github.io/settingsctl/documentation>
 
 		''')
 
-class SubArgumentParser(argparse.ArgumentParser):
+class ArgumentParser(argparse.ArgumentParser):
 
 	def set_help(self, help_str):
 
@@ -223,6 +206,27 @@ class SettingsCtlCLI(object):
 							help='Show version and legal info.',
 							action='store_true')
 
+		parser.set_help(HELP_BOILERPLATE.format(
+							usage=parser.format_usage(),
+							options_etc=dedent('''\
+								Commands:
+								  get        get a setting's value
+								  set        set a setting's value
+								  list       list settings
+								  tree       hierarchial tree of settings
+								  info       get information about a setting
+								  monitor    monitor for changes made via settingsctl
+								  list-all   list all possible choices for a setting (may not be applicable to all settings)
+
+								Options:
+								  --help     print this help message, and exit
+								  --version  print version and legal information, and exit
+								''')
+							)
+						)
+
+
+
 		args = parser.parse_args(sys.argv[1:2])
 
 		if args.command == '':
@@ -244,7 +248,7 @@ class SettingsCtlCLI(object):
 
 
 		if not hasattr(self, args.command.replace('-', '_')):
-			print('settingsctl: unrecognized command "{cmd}". See manual settingsctl(1) or the help printed below.\n'.format(cmd=args.command))
+			print('settingsctl: unrecognized command "{cmd}".'.format(cmd=args.command))
 			parser.print_help()
 			sys.exit(1)
 
@@ -255,7 +259,7 @@ class SettingsCtlCLI(object):
 
 	def list(self):
 
-		parser = SubArgumentParser(
+		parser = ArgumentParser(
 					description='List settings',
 					usage='settingsctl list [setting] [--json]')
 
@@ -264,7 +268,6 @@ class SettingsCtlCLI(object):
 							options_etc=dedent('''\
 								Options:
 								  setting		the setting to list
-								  --json        whether to display output in JSON form
 								''')
 							)
 						)
@@ -276,7 +279,10 @@ class SettingsCtlCLI(object):
 
 		args = parser.parse_args(sys.argv[2:])
 
-		ls = [x.replace('.py', '') for x in os.listdir(os.path.join(lib, args.setting))]
+		args.setting = args.setting.replace('.', '/')
+
+		ls_ = [x.replace('.py', '') for x in os.listdir(os.path.join(lib, args.setting))]
+		ls = [x + '/' if os.path.isdir(os.path.join(lib, x)) else x for x in ls_]
 
 		if args.json:
 			print(json.dumps(ls))
@@ -287,7 +293,7 @@ class SettingsCtlCLI(object):
 
 	def monitor(self):
 
-		parser = SubArgumentParser(
+		parser = ArgumentParser(
 					description='Monitor settings for changes made via settingsctl',
 					usage='settingsctl monitor [setting] [--json]')
 
@@ -303,6 +309,7 @@ class SettingsCtlCLI(object):
 
 		parser.add_argument('setting', nargs='?', default='')
 		parser.add_argument('--json', action='store_true')
+
 
 		args = parser.parse_args(sys.argv[2:])
 
@@ -351,7 +358,7 @@ class SettingsCtlCLI(object):
 
 	def tree(self):
 
-		parser = SubArgumentParser(
+		parser = ArgumentParser(
 					description='Hierarchial tree of settings',
 					usage='settingsctl tree [setting] [--max-depth] [--json]')
 
@@ -371,6 +378,7 @@ class SettingsCtlCLI(object):
 		parser.add_argument('--max-depth', type=int, nargs='?', const=0)
 		parser.add_argument('--json', action='store_true')
 
+
 		args = parser.parse_args(sys.argv[2:])
 
 		tree = fstree(os.path.join(lib, args.setting), args.max_depth)
@@ -384,12 +392,13 @@ class SettingsCtlCLI(object):
 
 	def info(self):
 
-		parser = SubArgumentParser(
+		parser = ArgumentParser(
 					description='Get information about a setting',
 					usage='settingsctl info <setting> [--json]')
 
 		parser.add_argument('setting', type=str)
 		parser.add_argument('--json', action='store_true')
+
 
 		parser.set_help(HELP_BOILERPLATE.format(
 							usage=parser.format_usage(),
@@ -408,6 +417,8 @@ class SettingsCtlCLI(object):
 
 		if args.json:
 			os.environ['SETTINGSCTL_USE_JSON'] = args.setting
+
+		os.environ['SETTINGSCTL_CURRENT_SETTING'] = args.setting
 
 		module = get_setting_module(args.setting)
 
@@ -431,12 +442,13 @@ class SettingsCtlCLI(object):
 
 	def list_all(self):
 
-		parser = SubArgumentParser(
+		parser = ArgumentParser(
 					description='List all choices of a setting (may not be applicable to all settings)',
 					usage='settingsctl list-all <setting> [--json]')
 
 		parser.add_argument('setting', type=str)
 		parser.add_argument('--json', action='store_true')
+
 
 		parser.set_help(HELP_BOILERPLATE.format(
 							usage=parser.format_usage(),
@@ -456,6 +468,7 @@ class SettingsCtlCLI(object):
 		if args.json:
 			os.environ['SETTINGSCTL_USE_JSON'] = args.setting
 
+		os.environ['SETTINGSCTL_CURRENT_SETTING'] = args.setting
 
 		module = get_setting_module(args.setting)
 
@@ -488,7 +501,7 @@ class SettingsCtlCLI(object):
 
 	def get(self):
 
-		parser = SubArgumentParser(
+		parser = ArgumentParser(
 					description='Get a setting',
 					usage='settingsctl get <setting> [--json]')
 
@@ -514,6 +527,8 @@ class SettingsCtlCLI(object):
 		if args.json:
 			os.environ['SETTINGSCTL_USE_JSON'] = args.setting
 
+		os.environ['SETTINGSCTL_CURRENT_SETTING'] = args.setting
+
 
 		module = get_setting_module(args.setting)
 
@@ -529,7 +544,7 @@ class SettingsCtlCLI(object):
 
 	def set(self):
 
-		parser = SubArgumentParser(
+		parser = ArgumentParser(
 					description='Set a setting',
 					usage='settingsctl set <setting> <value> [--json]')
 
@@ -539,6 +554,7 @@ class SettingsCtlCLI(object):
 								Arguments:
 								  setting		the setting whose value to set
 								  value		  the value to set it to
+
 								Options:
 								  --json		 whether to display output in JSON form
 								''')
@@ -550,11 +566,13 @@ class SettingsCtlCLI(object):
 		parser.add_argument('value', type=str, nargs='*')
 		parser.add_argument('--json', action='store_true')
 
+
 		args = parser.parse_args(sys.argv[2:])
 
 		if args.json:
 			os.environ['SETTINGSCTL_USE_JSON'] = args.setting
 
+		os.environ['SETTINGSCTL_CURRENT_SETTING'] = args.setting
 
 		module = get_setting_module(args.setting)
 

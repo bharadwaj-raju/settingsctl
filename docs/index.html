@@ -16,7 +16,7 @@
 
 	<div id="menu">
 		<span class="left">
-		<a class="thisSite" href="/settingsctl">home</a>
+		<a class="thisSite" href="">home</a>
 		<a href="documentation/">docs</a>
 		<a href="https://github.com/bharadwaj-raju/settingsctl">code</a>
 		<a href="documentation/install.html">install</a>
@@ -26,12 +26,23 @@
 	<div id="content" class="language-none">
 		<div id="nav">
 			<ul>
-				<li><a class="thisPage" href="/settingsctl">home</a></li>
+				<li><a class="thisPage" href="">home</a></li>
 				<li><a href="updates.html">updates</a></li>
 			</ul>
 			</div>
 		<div id="main">
-		<p>A cross-desktop (*nix) tool to handle desktop settings.</p>
+
+		<h2>A single interface to the settings of different desktop environments</h2>
+
+		<p class="emphasize">Different desktop environments on *nix usually have different configuration methods for the same setting.
+		This makes it hard for developers to handle desktop settings in their program.</p>
+
+		<p class="emphasize">settingsctl is a cross-desktop (*nix) tool to handle desktop settings.</p></b>
+
+		<a class="button emphasize" href="documentation/install.html">Get settingsctl</a>
+		<a class="button emphasize button-outline" href="documentation/tutorial.html" style="margin-left:10px">Get started</a>
+
+		<br />
 
 		<p>settingsctl is <a href="https://gnu.org/licenses/gpl.txt">Free software (GPL v3+).</a></p>
 
@@ -45,6 +56,7 @@ $ settingsctl get power.screen-lock.enabled
 true
 
 $ settingsctl set power.screen-lock.timeout 20
+power.screen-lock.timeout → 20
 		</code></pre>
 
 		<p>(All units in SI, so 20 → 20 seconds)</p>
@@ -53,15 +65,9 @@ $ settingsctl set power.screen-lock.timeout 20
 
 		<h2 id="usage">Usage</h2>
 
-		<p><code>settingsctl [set|get] [setting]</code></p>
+		<p><code>settingsctl &lt;command&gt; [setting] [--json]</code></p>
 
-		<p><code>settingsctl</code> has two main commands: <code>get</code> and <code>set</code>, in addition to other commands.</p>
-
-		<p>A "setting" here is a specific setting of the desktop (see: <a href="documentation/settings.html">list of them</a>).</p>
-
-		<p>A "setting"'s format is <code>category.subcategory.option</code></p>
-
-		<p>See: <a href="documentation/tutorial.html">A tutorial on <code>settingsctl</code></a>
+		<p>See: <a href="documentation/tutorial.html">A tutorial on <code>settingsctl</code></a></p>
 
 
 	</div>

@@ -6,8 +6,16 @@ body {
 	margin: 0;
 }
 
+#content {
+	height: 100%
+}
+
+html {
+	height: 100%
+}
+
 a {
-	color: #005386; /*#058;*/
+	color: #005386;
 	text-decoration: none;
 }
 
@@ -19,15 +27,52 @@ img a:hover {
 	text-decoration: none;
 }
 
+.button {
+	background-color: #007dc1;
+	border-radius: 3px;
+	display: inline-block;
+	cursor: pointer;
+	color: #ffffff;
+	font-family: Arial;
+	font-size: 13px;
+	padding: 12px 24px;
+	text-decoration: none;
+}
+
+.button:hover {
+	background-color:#0061a7;
+	text-decoration: none;
+}
+
+.button:active {
+	position:relative;
+	top:1px;
+}
+
+.button-outline {
+	background-color: #fff !important;
+	color: #007dc1 !important;
+	border: 1px dashed #007dc1 !important;
+}
+
+.button-outline:hover {
+	border: 1px solid #007dc1 !important;
+}
+
+.emphasize {
+	font-size: 110%;
+}
+
 #menu {
 	clear: both;
 	overflow: hidden;
 	color: #069;
-	background-color: #17a;
+	background-color: #007dc1;
 	padding: 0.7ex;
 	font-size: 94%;
 	border-top: 1px solid #ccc;
 	border-bottom: 1px solid #069;
+	text-decoration: none;
 }
 
 #menu a {
@@ -37,17 +82,16 @@ img a:hover {
 
 #menu a:hover {
 	background-color: #069;
+	text-decoration: none;
 }
 
 #menu a.thisSite {
 	font-weight: bold;
-	/*font-style: italic;*/
 }
 
 #header {
 	clear: both;
-	color: #555; /*#666;*/
-	/*text-shadow: 1px 1px #fff;*/
+	color: #555;
 	font-size: 1.78em; /*1.7em;*/
 	padding: 0.7ex 0.7ex 0.7ex 0.7em;
 }
@@ -62,6 +106,8 @@ img a:hover {
 	color: #17a; /*#666;*/
 	margin-left: 5px;
 }
+
+
 
 h1 {
 	margin: 1em 1ex 0.5ex 0;
@@ -101,7 +147,7 @@ h4 {
 	float: left;
 	margin: 0 1px 0 0;
 	padding: 1em 0;
-	width: 200px;
+	width: 150px;
 	height: 100%;
 }
 
@@ -133,30 +179,15 @@ h4 {
 }
 
 #main {
-	margin: 0 0 0 200px;
+	margin: 0 0 0 150px;
 	padding: 1.5em;
 	max-width: 50em;
 	border-left: 1px dotted #ccc;
 	height: 100%
 }
 
-#footer {
-	clear: both;
-	color: #666;
-	border-top: 1px solid #ccc;
-	font-size: 84%;
-	padding: 1em;
-	margin: 0 0 1.5em 0;
-}
-
 .left {
 	float: left;
-	margin: 0;
-	padding: 0;
-}
-
-.right {
-	float: right;
 	margin: 0;
 	padding: 0;
 }

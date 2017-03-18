@@ -17,8 +17,9 @@ Ensure you have [Python 3](https://python.org). You probably already have it.
 1. Download settingsctl [here (zip)](https://github.com/bharadwaj-raju/settingsctl/archive/master.zip)
 
 2. Either:
-	1. Install settingsctl system-wide (`sudo sh install.sh`)
-	2. Or just run it (`./settingsctl --help`)
+	1. Install settingsctl system-wide (`sudo ./install.py`)
+	2. Install settingsctl for your user (`./install.py --user`)
+	3. Or just run it (`./settingsctl --help`)
 
 ### Examples:
 
@@ -30,14 +31,14 @@ Ensure you have [Python 3](https://python.org). You probably already have it.
 
 	$ settingsctl set power.screen-lock.timeout 20
 
-Also see [Documentation::Tutorial](https://bharadwaj-raju.github.io/settingsctl/documentation/tutorial.html)
+Also see [Documentation::Tutorial](https://bharadwaj-raju.github.io/settingsctl/documentation/tutorial.html).
 
 
 ## Features
 
 - Support for nearly every setting you may find in a desktop environment's settings.
 - Support for nearly every desktop environment (Yours isn't supported? [File an issue!](https://github.com/bharadwaj-raju/settingsctl/issues/new))
-- Support for JSON output format for easy parsing
+- Support for optional JSON output format for easy parsing
 - Extensive [documentation](https://bharadwaj-raju.github.io/settingsctl/documentation)
 
 
