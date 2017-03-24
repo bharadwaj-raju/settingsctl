@@ -34,9 +34,9 @@ if os.environ.get('XDG_CONFIG_HOME'):
 else:
 	config_dir = os.path.expanduser('~/.config')
 
-desktop_env = sp.check_output([os.environ.get('SETTINGSCTL_BIN'), 'get', 'desktop-environment']).decode('utf-8').strip()
+desktop_env = Process([os.environ.get('SETTINGSCTL_BIN'), 'get', 'desktop-environment']).stdout
 
-def format_set(data):
+def validate(data):
 
 	if not os.path.isfile(data[0]):
 		print('{name}: cannot access "{file}": no such file.'.format(name=setting, file=data[0]))
@@ -67,26 +67,17 @@ def get():
 			SCHEMA = 'org.mate.background'
 			KEY = 'picture-filename'
 
-		try:
-			from gi.repository import Gio
+		proc = Process(['gsettings', 'get', SCHEMA, KEY])
 
-			gsettings = Gio.Settings.new(SCHEMA)
-			return gsettings.get_string(KEY).replace('file://', '')
+		if proc.return_code != 0:
+			proc = Process(['mateconftool-2', '-t', 'string', '--get',
+							'/desktop/mate/background/picture-filename'])
 
-		except ImportError:
-			try:
-				return sp.check_output(
-					['gsettings', 'get', SCHEMA, KEY]).replace('file://', '')
-			except:  # MATE < 1.6
-				return sp.check_output(
-						['mateconftool-2', '-t', 'string', '--get',
-						 '/desktop/mate/background/picture_filename']
-						).replace('file://', '')
+		return proc.stdout
 
 	elif desktop_env == 'gnome2':
-		args = ['gconftool-2', '-t', 'string', '--get',
-				'/desktop/gnome/background/picture_filename']
-		return sp.check_output(args).replace('file://', '')
+		return Process(['gconftool-2', '-t', 'string', '--get',
+						'/desktop/gnome/background/picture_filename']).replace('file://', '')
 
 	elif desktop_env == 'kde':
 		conf_file = os.path.join(config_dir, 'plasma-org.kde.plasma.desktop-appletsrc')
@@ -114,22 +105,20 @@ def get():
 	elif desktop_env == 'xfce':
 		# XFCE4's image property is not image-path but last-image (What?)
 
-		list_of_properties = sp.check_output(
-			['xfconf-query', '-R', '-l', '-c', 'xfce-desktop', '-p',
-			 '/backdrop']).decode('utf-8').strip()
+		list_of_properties = Process(['xfconf-query', '-R', '-l', '-c',
+									  'xfce-desktop', '-p', '/backdrop']).stdout
 
-		for i in list_of_properties.split('\n'):
+		for i in list_of_properties.splitlines():
 			if i.endswith('last-image') and 'workspace' in i:
 				# The property given is a background property
-				return sp.check_output(
-					['xfconf-query', '-c', 'xfce-desktop', '-p', i]).decode('utf-8').strip()
+				return Process(
+					['xfconf-query', '-c', 'xfce-desktop', '-p', i]).stdout
 
 	elif desktop_env == 'razor-qt':
 		desktop_conf = configparser.ConfigParser()
 		# Development version
 
-		desktop_conf_file = os.path.join(
-			config_dir, 'razor', 'desktop.conf')
+		desktop_conf_file = os.path.join(config_dir, 'razor', 'desktop.conf')
 
 		if os.path.isfile(desktop_conf_file):
 			config_option = r'screens\1\desktops\1\wallpaper'
@@ -234,26 +223,15 @@ def set(image):
 			SCHEMA = 'org.mate.background'
 			KEY = 'picture-filename'
 
-		try:
-			from gi.repository import Gio
+		proc = Process(['gsettings', 'set', SCHEMA, KEY, image])
 
-			gsettings = Gio.Settings.new(SCHEMA)
-			gsettings.set_string(KEY, uri)
-		except ImportError:
-			try:
-				gsettings_proc = sp.Popen(
-					['gsettings', 'set', SCHEMA, KEY, uri])
-			except:  # MATE < 1.6
-				sp.Popen(['mateconftool-2', '-t', 'string', '--set', '/desktop/mate/background/picture_filename', '%s' % image],
-						 stdout=sp.PIPE)
-			finally:
-				gsettings_proc.communicate()
-
-				if gsettings_proc.returncode != 0:
-					sp.Popen(['mateconftool-2', '-t', 'string', '--set', '/desktop/mate/background/picture_filename', '%s' % image])
+		if proc.return_code != 0:
+			Process(['mateconftool-2', '-t', 'string', '--set',
+					 '/desktop/mate/background/picture-filename',
+					 image])
 
 	elif desktop_env == 'gnome2':
-		sp.Popen(
+		Process(
 			['gconftool-2', '-t', 'string', '--set', '/desktop/gnome/background/picture_filename', image]
 		)
 
@@ -273,8 +251,10 @@ def set(image):
 		}
 		''') % image
 
-		sp.Popen(
-				['dbus-send', '--session', '--dest=org.kde.plasmashell', '--type=method_call', '/PlasmaShell', 'org.kde.PlasmaShell.evaluateScript',
+		Process(
+				['dbus-send', '--session', '--dest=org.kde.plasmashell',
+				 '--type=method_call', '/PlasmaShell',
+				 'org.kde.PlasmaShell.evaluateScript',
 				 'string:{}'.format(kde_script)]
 		)
 
@@ -285,15 +265,15 @@ def set(image):
 	elif desktop_env == 'xfce4':
 		# XFCE4's image property is not image-path but last-image (What?)
 
-		list_of_properties = sp.check_output(['xfconf-query', '-R', '-l', '-c', 'xfce4-desktop', '-p', '/backdrop']
-			).decode('utf-8').strip()
+		list_of_properties = Process(['xfconf-query', '-R', '-l', '-c', 'xfce4-desktop', '-p', '/backdrop']
+			).stdout
 
-		for i in list_of_properties.split('\n'):
+		for i in list_of_properties.splitlines():
 			if i.endswith('last-image'):
 				# The property given is a background property
-				sp.Popen(['xfconf-query', '-c', 'xfce4-desktop', '-p', i, '-s', image])
+				Process(['xfconf-query', '-c', 'xfce4-desktop', '-p', i, '-s', image])
 
-				sp.Popen(['xfdesktop', '--reload'])
+				Process(['xfdesktop', '--reload'])
 
 	elif desktop_env == 'razor-qt':
 		desktop_conf = configparser.ConfigParser()
@@ -322,33 +302,34 @@ def set(image):
 	elif desktop_env in ['fluxbox', 'jwm', 'openbox', 'afterstep', 'i3']:
 		try:
 			args = ['feh', '--bg-scale', image]
-			sp.Popen(args)
+			Process(args)
 		except:
 			pass # TODO: feh alts support
 
 	elif desktop_env == 'icewm':
 		args = ['icewmbg', image]
-		sp.Popen(args)
+		Process(args)
 
 	elif desktop_env == 'blackbox':
 		args = ['bsetbg', '-full', image]
-		sp.Popen(args)
+		Process(args)
 
 	elif desktop_env == 'lxde':
 		args = ['pcmanfm', '--set-wallpaper', image, '--wallpaper-mode=scaled']
-		sp.Popen(args)
+		Process(args)
 
 	elif desktop_env == 'lxqt':
 		args = ['pcmanfm-qt', '--set-wallpaper', image, '--wallpaper-mode=scaled']
-		sp.Popen(args)
+		Process(args)
 
 	elif desktop_env == 'windowmaker':
 		args = ['wmsetbg', '-s', '-u', image]
-		sp.Popen(args)
+		Process(args)
 
 	elif desktop_env == 'enlightenment':
 		args = 'enlightenment_remote -desktop-bg-add 0 0 0 0 %s' % image
-		sp.Popen(args, shell=True)
+		Process(['enlightenment_remote', '-desktop-bg-add', '0', '0', '0', '0',
+				 image])
 
 	elif desktop_env == 'awesome':
 		with sp.Popen("awesome-client", stdin=sp.PIPE) as awesome_client:

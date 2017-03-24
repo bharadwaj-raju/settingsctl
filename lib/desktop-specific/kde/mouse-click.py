@@ -28,7 +28,7 @@ setting = 'desktop-specific.kde.mouse-click'
 config_home = os.path.expanduser(os.environ.get('XDG_CONFIG_HOME', '~/.config'))
 settings_file = os.path.join(config_home, 'kdeglobals')
 
-def format_set(data):
+def validate(data):
 
 	if data[0].lower() not in ['single', 'double']:
 		message('value must be one of "single" or "double"', 'error')

@@ -22,15 +22,23 @@
 
 import os
 import sys
-import subprocess as sp
 from textwrap import dedent
+import configparser
 
 setting = 'power.screen-lock.timeout'
 
-def format_set(data):
+desktop_env = Process([os.environ.get('SETTINGSCTL_BIN'), 'get', 'desktop-environment']).stdout
+
+if os.environ.get('XDG_CONFIG_HOME', None) is not None:
+	xdg_config_home = os.environ.get('XDG_CONFIG_HOME')
+
+else:
+	xdg_config_home = os.path.expanduser('~/.config')
+
+def validate(data):
 
 	if len(data) > 1:
-		message('only one theme can be set', 'error')
+		message('only one timeout value can be set', 'error')
 		sys.exit(1)
 
 	try:
@@ -49,6 +57,22 @@ def info():
 			}
 
 def set(data):
+
+	if desktop_env in ['gnome', 'unity', 'cinnamon', 'pantheon', 'budgie']:
+		Process(['gsettings', 'set', 'org.gnome.desktop.screensaver',
+				 'lock-delay', str(data)])
+
+	elif desktop_env == 'kde':
+		config = configparser.ConfigParser()
+		config.read(os.path.join(xdg_config_home, 'kscreenlockerrc'))
+		config.update({'Daemon': {'Timeout': str(data)}})
+
+		with open(os.path.join(xdg_config_home, 'kscreenlockerrc'), 'w') as f:
+			config.write(f)
+
+	elif desktop_env == 'xfce':
+
+
 
 	# First, rewrite the gtkrc file to not have any pre-existing
 	# include entries.
@@ -122,7 +146,7 @@ def get():
 
 		# gtk-theme-name is what will be likely reported by settings managers
 		# but the include entry is what is usually followed by applications
-		# thus a warning is issued to stdout
+		# thus a warning is issued
 
 		return theme
 

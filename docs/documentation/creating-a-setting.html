@@ -42,18 +42,16 @@
 			<h2 id="overview">Overview</h2>
 			This page will describe how to create a new setting for settingsctl to use. <br /> <br />
 
-			Settings must exist in the settingsctl <a href="../documentation/settings-lib.html">lib</a>. <br /> <br />
+			<b>NOTE:</b> Please read the <strong>entire</strong> document. <br /> <br />
+
+			Settings must exist in the settingsctl <a href="../documentation/settings-lib.html">lib</a> directory. <br /> <br />
 
 			A settings file must exist as a Python file in the appropriate subdirectory of the lib. For example,
 			a setting <code>appearance.desktop.wallpaper</code> will be defined in <code>appearance/desktop/wallpaper.py</code>,
-			which will be a subdirectory of the lib. <br /> <br />
+			which will be a subdirectory of the lib (mentioned above). <br /> <br />
 
-			The settings file must define a <code>settings</code> string, and the functions
-			<code>format_set(data)</code>, <code>get()</code>, <code>info()</code> and <code>set(data)</code>. <br /> <br />
-
-			The setting must handle <a href="#error-msg-handling">errors, warnings and messages in the standard way.</a> <br /> <br />
-
-			There are also optional things to define. <br /> <br />
+			You might want to look at <a href="#sample-setting">a sample setting file</a>, which illustrates
+			this documentation in code.
 
 			Of course, <em>inclusion</em> of your setting into the settingsctl lib would require you
 			to <a href="https://github.com/bharadwaj-raju/settingsctl/issues/new">file an issue</a>. <br />
@@ -78,7 +76,7 @@ setting = 'hello.world.example'
 
 			<br />
 
-			<h3 id="format-set-func"><code>format_set(<i>data</i>)</code></h3>
+			<h3 id="validate-func"><code>validate(<i>data</i>)</code></h3>
 
 			This function will receive the list of arguments received from the user (argument <code>data</code>). <br /> <br />
 
@@ -143,13 +141,13 @@ return {
 
 			This will implement the setting being handled. <br /> <br />
 
-			It will get the user's arguments <em>after</em> being run through <code>format_set(<i>data</i>)</code> as the <code>data</code> argument.
+			It will get the user's arguments <em>after</em> being run through <code>validate(<i>data</i>)</code> as the <code>data</code> argument.
 
 			<br /> <br />
 
 			<h2 id="error-msg-handling">Error and Message Handling</h2>
 
-			<em>Nothing must be printed!</em> <br /> <br />
+			<p><em>Nothing must be printed!</em></p>
 
 			Any errors and messages must be handled through the <code>message()</code> function, which is made available by settingsctl:
 
@@ -159,7 +157,7 @@ message('error message', level='error')
 
 			where <code>error message</code> should be replaced with the error. <br />
 
-			You can also use <code>level='info'</code> or <code>level='warning'</code>
+			You can also use <code>level='info'</code> or <code>level='warning'</code>. <br /><br />
 
 			In case of errors, exit with code <code>1</code>:
 
@@ -169,6 +167,42 @@ sys.exit(1)
 
 
 			<br /> <br />
+
+			<h2 id="process-handling">Process Handling and Command Execution</h2>
+
+			<p>Use the <code>Process</code> function/object, which provides an easy way to handle
+			processes and commands.
+			</p>
+
+			<p>It allows you to not implement encoding/decoding, whitespace handling and other such things.</p>
+
+			Usage:
+
+			<pre><code class="language-python">
+proc = Process(['ls', '-l'])
+proc.stdout       # will return ls -l output
+proc.return_code  # will give return code (in this case, 0)
+
+proc = Process('echo "Hello"', shell=True)  # use shell=True to execute in /bin/sh
+proc.stdout       # will return "Hello"
+proc.stderr       # will be empty, as there is no message on stderr
+			</pre></code>
+
+			<p>Arguments:
+			<dl>
+				<dt><code>cmd</code></dt>
+				<dd>The command to execute. Should be a string if <code>shell</code> is <code>True</code> else a list.</dd>
+
+				<dt><code>shell</code></dt>
+				<dd>Whether to execute in <code>/bin/sh}</code>. Default: <code>False</code>.</dd>
+
+				<dt><code>strip</code></dt>
+				<dd>Whether to strip extra newlines and whitespace from end of output. Default: <code>True</code>
+
+			</dl>
+			</p>
+
+
 
 			<h2 id="may-define">What a setting <em>may</em> define</h2>
 
@@ -180,10 +214,10 @@ sys.exit(1)
 
 			The <code>read_only</code> variable, if defined, causes the setting to become read-only. <br /><br />
 
-			Read-only settings are not required to define <a href="format-set-func"><code>format_set(<i>data</i>)</code></a>
+			Read-only settings are not required to define <a href="validate-func"><code>validate(<i>data</i>)</code></a>
 			or <a href="set-func"><code>set(<i>data</i>)</code></a> functions. <br />
 
-			settingsctl will error out on an attempt to set a read-only setting. <br /><br />
+			settingsctl will produce an error on an attempt to set a read-only setting (you do not have to handle it). <br /><br />
 
 			Example:
 
@@ -196,7 +230,72 @@ read_only = True
 
 			<br />
 
+			<h2 id="sample-setting">Sample Setting File</h2>
 
+			Defines a sample setting "sample.setting", which takes an integer and a string (path to a file, for instance). <br /> <br />
+			File <code>sample/setting.py</code>:
+
+			<pre class="language-python"><code>
+# &lt; license header here… &gt;
+
+import os
+import sys
+
+setting = 'sample.setting'
+
+def validate(data):
+
+	# data will be data as given by user
+
+	# here you should handle validation of the data
+	# and also any "formatting" (changing of types, etc) for use by set()
+
+	try:
+		int(data[0])
+
+	except ValueError:
+		# not a valid integer
+		message('first argument must be an integer', level='error')
+		sys.exit(1)
+
+	if not os.path.isfile(data[1]):
+		message('file "%s" does not exist' % data[1], level='error')
+		sys.exit(1)
+
+	# return the data, converting first argument to an integer
+
+	return [int(data[0]), data[1]]
+
+
+
+def info():
+
+	# here you should return a dictionary in the format shown below
+
+	return {
+				'type': ['integer', 'string'],
+				'description': 'A sample setting',
+				'data': ['any number', 'path to a file']  # descriptions of data received, in order
+			}
+
+
+def get():
+
+	# here you should handle getting the value of the setting
+
+	# as this is just a sample setting, we do nothing much here
+
+	return 'Sample'
+
+
+def set(data):
+
+	# here you should handle setting the data
+
+	# data will be the data as given by validate(data)
+	# as this is just a sample setting, we do nothing here
+
+	pass
 
 
 	</div>

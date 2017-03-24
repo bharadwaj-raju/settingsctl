@@ -25,22 +25,25 @@ import sys
 import subprocess as sp
 from textwrap import dedent
 
-setting = 'appearance.theme.gtk.gtk-2'
+setting = 'sound.volume'
 
 def validate(data):
 
 	if len(data) > 1:
-		message('only one theme can be set', 'error')
+		message('only one integer will be taken as volume', 'error')
 		sys.exit(1)
+
+	if data[0] < 0 or data[0] > 100:
+		message('integer must be between 0 and 100', 'error')
 
 	return data[0]
 
 def info():
 
 	return {
-				'type': ['string'],
-				'description': 'The current theme for GTK+ 2 applications',
-				'data': ['name of the theme'],
+				'type': ['integer'],
+				'description': 'The volume',
+				'data': ['volume percentage'],
 			}
 
 def set(data):
@@ -117,7 +120,7 @@ def get():
 
 		# gtk-theme-name is what will be likely reported by settings managers
 		# but the include entry is what is usually followed by applications
-		# thus a warning is issued
+		# thus a warning is issued to stdout
 
 		return theme
 

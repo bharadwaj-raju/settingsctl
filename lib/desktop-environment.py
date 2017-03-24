@@ -30,9 +30,9 @@ read_only = True
 def info():
 
 	return {
-			'type': ['string'],
-			'description': 'The running desktop environment or window manager',
-			'data': ['the name of the desktop environment'],
+				'type': ['string'],
+				'description': 'The running desktop environment or window manager',
+				'data': ['the name of the desktop environment'],
 			}
 
 def get():

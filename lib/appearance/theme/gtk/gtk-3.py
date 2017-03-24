@@ -29,9 +29,9 @@ setting = 'appearance.theme.gtk.gtk-3'
 config_home = os.path.expanduser(os.environ.get('XDG_CONFIG_HOME', '~/.config'))
 settings_file = os.path.join(config_home, 'gtk-3.0/settings.ini')
 
-desktop = sp.check_output([os.getenv('SETTINGSCTL_BIN'), 'get', 'desktop-environment']).decode('utf-8').strip()
+desktop = Process([os.getenv('SETTINGSCTL_BIN'), 'get', 'desktop-environment']).stdout
 
-def format_set(data):
+def validate(data):
 
 	if len(data) > 1:
 		message('only one theme can be set', 'error')
@@ -58,10 +58,12 @@ def set(data):
 		key = 'org.pantheon.desktop.interface'
 
 	try:
-		sp.Popen(['gsettings', 'set', key, 'gtk-theme', data])
+		Process(['gsettings', 'set', key, 'gtk-theme', data])
 
 	except UnboundLocalError:
-		pass  # Not GNOME-based desktop
+		# Not GNOME-based desktop
+		# Thus, values key and data won't be set (see if condition above)
+		pass
 
 
 	with open(settings_file) as f:
@@ -86,7 +88,7 @@ def get():
 		key = 'org.pantheon.desktop.interface'
 
 	try:
-		de_theme = sp.check_output(['gsettings', 'get', key, 'gtk-theme']).decode('utf-8').strip()
+		de_theme = Process(['gsettings', 'get', key, 'gtk-theme']).stdout
 
 	except UnboundLocalError:
 		# Not GNOME-based desktop
@@ -99,13 +101,11 @@ def get():
 				theme = line.split('=', 1)[-1].replace('"', '').strip()
 
 	try:
-		if de_theme == theme:
-			return theme
-
-		else:
-			return de_theme
+		return theme if de_theme == theme else de_theme
 
 	except UnboundLocalError:
+		# Not GNOME-based desktop
+		# Thus, values key and data won't be set (see if-elif and try-except above)
 		return theme
 
 

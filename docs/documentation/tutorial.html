@@ -101,9 +101,11 @@ $ settingsctl set appearance.desktop.wallpaper /path/to/new/wallpaper 1
 			You can list all possibilites or options of a setting through the <code>list-all</code> command.
 
 			<pre class="language-bash"><code>
-$ settingsctl list-all display.monitors
-VGA1
-Projector1
+$ settingsctl list-all desktop-environment
+xfce
+kde
+gnome
+…
 			</pre></code>
 
 
@@ -115,12 +117,12 @@ Projector1
 $ settingsctl list
 appearance/
 power/
-...
+…
 
 $ settingsctl list appearance
 desktop/
 theme
-...
+…
 			</pre></code>
 
 			<h2>Tree of settings</h2>
@@ -132,7 +134,7 @@ $ settingsctl tree
 appearance/
 	desktop/
 		wallpaper
-...
+…
 		</pre></code>
 
 			<h2>Monitor a setting for changes</h2>

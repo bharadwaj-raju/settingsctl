@@ -29,6 +29,9 @@ import json
 from textwrap import dedent
 import socket
 import uuid
+import subprocess as sp
+from collections import namedtuple
+import builtins
 
 __version__ = '0.0.1'
 
@@ -119,8 +122,17 @@ def fstree(dir_, maxdepth=None):
 	return __tree(dir_)
 
 # -- Functions provided to all settings
+#    Must be documented
 
 def module_message(message, level='info'):
+
+	'''Causes a message to be produced in the standard way.
+	This allows for settings not having to implement JSON, etc.
+
+	Arguments:
+	  message  The message to be produced. Required.
+	  level    The severity of the message. One of 'info', 'warning' or 'error'. Default: info
+	'''
 
 	msg = {
 				'setting': os.environ.get('SETTINGSCTL_CURRENT_SETTING'),
@@ -136,6 +148,38 @@ def module_message(message, level='info'):
 		sys.stderr.write('{setting}: {level}: {message}\n'.format_map(msg))
 		sys.stderr.flush()
 
+def module_Process(cmd, shell=False, strip=True):
+
+	'''Run a command.
+	This allows settings to not implement their own newline handling, encoding etc.
+
+	Arguments:
+	  cmd      The command to be run. Required. If shell is True, will be a string; otherwise a list of arguments
+	  shell    Whether to run the command using /bin/sh. Default: False
+	  strip    Whether to strip extra whitespace and newlines from the end of the command output. Default: True
+
+	Returns:
+	  object    (stdout, stderr, return_code)
+
+	  Can be accessed as:
+		proc = Process(...)
+		proc.stdout
+	'''
+
+	process = sp.Popen(cmd, shell=shell, universal_newlines=True,
+					   stdout=sp.PIPE, stderr=sp.PIPE)
+
+	stdout, stderr = process.communicate()
+	return_code = process.returncode
+
+	if strip:
+		stdout, stderr = [out.rstrip() for out in (stdout, stderr)]
+
+	Proc = namedtuple('Process', 'stdout stderr return_code')
+
+	return Proc(stdout, stderr, return_code)
+
+
 # -- Miscellaneous functions
 
 # Get a Python module from a dot-separated setting name
@@ -148,8 +192,10 @@ def get_setting_module(setting):
 
 	sys.path.insert(0, os.path.join(lib, setting))
 
-	module = __import__(last)
-	module.message = module_message
+	builtins.Process = module_Process
+	builtins.message = module_message
+
+	module = __import__(last, {'Process': module_Process})
 
 	return module
 
@@ -552,11 +598,12 @@ class SettingsCtlCLI(object):
 							usage=parser.format_usage(),
 							options_etc=dedent('''\
 								Arguments:
-								  setting		the setting whose value to set
-								  value		  the value to set it to
+								  setting		    the setting whose value to set
+								  value		        the value to set it to
 
 								Options:
-								  --json		 whether to display output in JSON form
+								  --json		    whether to display output in JSON form
+								  --validate-only   only validate the input data, no changing the setting
 								''')
 							)
 						)
@@ -565,6 +612,7 @@ class SettingsCtlCLI(object):
 		parser.add_argument('setting', type=str)
 		parser.add_argument('value', type=str, nargs='*')
 		parser.add_argument('--json', action='store_true')
+		parser.add_argument('--validate-only', action='store_true')
 
 
 		args = parser.parse_args(sys.argv[2:])
@@ -594,7 +642,7 @@ class SettingsCtlCLI(object):
 			pass
 
 
-		value_fmt = module.format_set(args.value)
+		value_fmt = module.validate(args.value)
 
 		if args.json:
 			print(json.dumps({
@@ -606,6 +654,9 @@ class SettingsCtlCLI(object):
 		else:
 			print(args.value, 'formatted to (by the setting)', value_fmt)
 			print(args.setting, '→', value_fmt)
+
+		if args.validate_only:
+			sys.exit(0)
 
 		module.set(value_fmt)
 

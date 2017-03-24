@@ -22,17 +22,15 @@
 
 import os
 import sys
-import subprocess as sp
-from textwrap import dedent
 
 setting = 'display.resolution'
 
-ls_monitors = sp.check_output('xrandr -q | grep connected | grep -v disconnected', shell=True).decode('utf-8').rstrip()
+ls_monitors = Process('xrandr -q | grep connected | grep -v disconnected', shell=True).stdout
 
 # Typical output:
 # VGA1 connected primary 1440x900+0+0 (normal left inverted right x axis y axis) 410mm x 260mm
 
-def format_set(data):
+def validate(data):
 
 	if data[0] not in [x.split(' ')[0] for x in ls_monitors.splitlines()]:
 		message('no such monitor connected', 'error')
@@ -54,7 +52,7 @@ def info():
 
 def set(data):
 
-	sp.Popen(['xrandr', '--output', data['monitor'], '--mode', data['resolution']])
+	Process(['xrandr', '--output', data['monitor'], '--mode', data['resolution']])
 
 
 def get():

@@ -50,7 +50,7 @@ Firstly, the language: settingsctl is written in Python 3.
 
 The coding conventions are mainly [PEP8](http://pep8.org), but with one notable exception: Tabs are used instead of spaces.
 
-### Contributing a setting
+### Contributing a new setting
 
 1. Fork the repository.
 
@@ -58,13 +58,25 @@ The coding conventions are mainly [PEP8](http://pep8.org), but with one notable 
 
 3. Then [file a pull request](file-pr) for your change.
 
+### Contributing to an existing setting
+
+1. Fork the repository.
+
+2. In the `lib/` directory, find the Python module that defines the setting.
+
+3. Code your contribution (feature, bug fix, etc).
+
+4. Then [file a pull request](https://github.com/bharadwaj-raju/settingsctl/compare) for your change.
+
 ### Contributing to the settingsctl command itself
 
 1. Fork the repository.
 
 2. Look through the code (file: `settingsctl`).
 
-3. Then [file a pull request](https://github.com/bharadwaj-raju/settingsctl/compare) for your change.
+3. Code your contribution (feature, bug fix, etc).
+
+4. Then [file a pull request](https://github.com/bharadwaj-raju/settingsctl/compare) for your change.
 
 
 ## License
@@ -75,6 +87,13 @@ settingsctl is free software: you are free to change and redistribute it.
 There is NO WARRANTY, to the extent permitted by law.
 
 For the license text, see the included LICENSE file.
+
+
+## Versioning
+
+Follows [Semantic Versioning](http://semver.org).
+
+Information about changes by version can be found in CHANGELOG and the [Updates page](https://bharadwaj-raju.github.io/settingsctl/updates.html).
 
 
 ## Why not xdg-settings
