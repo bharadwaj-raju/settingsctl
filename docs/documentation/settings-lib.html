@@ -6,7 +6,7 @@
 	<meta charset="utf-8">
 	<link href="../resources/prism.css" rel="stylesheet" />
 </head>
-<body>
+<body style="height:100%">
 	<script src="../resources/prism.js"></script>
 	<div id="header">
 		<a href="../"><img src="../resources/logo.png" alt="settingsctl" title="settingsctl"/></a>
@@ -24,7 +24,7 @@
 	</div>
 
 	<div id="content">
-		<div id="nav">
+		<nav id="nav">
 			<ul>
 			<li><a href="../documentation">docs</a></li>
 			<li><a href="../documentation/tutorial.html">tutorial</a></li>
@@ -36,7 +36,7 @@
 			<li><a href="../documentation/monitor.html">monitor a setting</a></li>
 			<li><a href="../documentation/settings-lib.html" class="thisPage">settings lib</a></li>
 			</ul>
-				</div>
+		</nav>
 
 		<div id="main">
 			<h2 id="overview">Overview</h2>
@@ -55,6 +55,7 @@
 			<ol>
 				<li>The directory set by the environment variable <code>$SETTINGSCTL_LIB</code></li>
 				<li>A <code>lib/</code> directory in the current directory</li>
+				<li>The user lib <code>~/.local/lib/settingsctl</code></li>
 				<li>The system-wide lib <code>/usr/lib/settingsctl/</code></li>
 			</ol>
 

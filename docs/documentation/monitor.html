@@ -24,7 +24,7 @@
 	</div>
 
 	<div id="content">
-		<div id="nav">
+		<nav id="nav">
 			<ul>
 			<li><a href="../documentation">docs</a></li>
 			<li><a href="../documentation/tutorial.html">tutorial</a></li>
@@ -36,7 +36,7 @@
 			<li><a href="../documentation/monitor.html" class="thisPage">monitor a setting</a></li>
 			<li><a href="../documentation/settings-lib.html">settings lib</a></li>
 			</ul>
-				</div>
+		</nav>
 
 		<div id="main">
 			<h2 id="overview">Overview</h2>
@@ -60,31 +60,22 @@ hello.foo.bar → Example
 			For <code>settingsctl monitor hello --json</code>:
 
 			<pre><code class="language-python">
-{
-    "setting": "hello.world.example",
-	"value": "Hello World",
-	"value-raw": ["Hello", "World"]
-}
-{
-	"setting": "hello.foo.bar",
-	"value": "Example",
-	"value-raw": ["Example"]
-}
+{"setting": "hello.world.example", "value": "Hello World", "value-raw": ["Hello", "World"]}
+{"setting": "hello.foo.bar", "value": "Example", "value-raw": ["Example"]}
 			</pre></code>
 
-			<br />
-
-			<h2 id="techincal-explanation">Technical Explanation (How It Works)</h2>
+			It is one-entry-per-line to make it easy to parse (as multiple JSON entries may be outputted).
 
 			<br />
 
-			For each time a setting is <code>set</code>, the JSON is dumped into a <code>SETTINGSCTL_IPC.json</code> file
-			in the runtime/tmp directory. <br /> <br />
+			<h2 id="technical-explanation">Technical Explanation (How It Works)</h2>
 
-			Then, a socket connection (<code>SETTINGSCTL_IPC.socket</code>) is established with the monitor session. <br /> <br />
+			<br />
 
-			Each time a setting is set, a 'SET' instruction is sent via the socket, which causes the monitor session
-			to print out the data.
+			<p>For each time a setting is <code>set</code>, JSON data is dumped into a <code>SETTINGSCTL_IPC</code> file
+			in the runtime/tmp directory (as per XDG standards).</p>
+
+			<p>The monitor sessions, which watch this file for changes, are alerted of a settings being set, and print out the data.</p>
 
 
 

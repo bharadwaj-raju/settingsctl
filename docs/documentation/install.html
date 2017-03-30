@@ -3,10 +3,10 @@
 <head>
 	<title>Documentation::Installation - settingsctl</title>
 	<link rel="stylesheet" type="text/css" href="../resources/style.css">
-	<link rel="stylesheet" type="text/css" href="../resources/prism.css"
+	<link rel="stylesheet" type="text/css" href="../resources/prism.css">
 	<meta charset="utf-8">
 </head>
-<body>
+<body style="height:100%">
 	<script src="../resources/prism.js"></script>
 	<div id="header">
 		<a href="../"><img src="../resources/logo.png" alt="settingsctl" title="settingsctl"/></a>
@@ -24,7 +24,7 @@
 	</div>
 
 	<div id="content">
-		<div id="nav">
+		<nav id="nav">
 			<ul>
 			<li><a href="../documentation">docs</a></li>
 			<li><a href="../documentation/tutorial.html">tutorial</a></li>
@@ -36,39 +36,48 @@
 			<li><a href="../documentation/monitor.html">monitor a setting</a></li>
 			<li><a href="../documentation/settings-lib.html">settings lib</a></li>
 			</ul>
-				</div>
+		</nav>
 
-		<div id="main" class="language-bash">
+		<div id="main" class="language-none">
 			<h2>Installation</h2>
 
-			First, get the code: <br /><br />
+			<p>Either install it like this:</p>
 
-			<a class="button" href="https://github.com/bharadwaj-raju/settingsctl/archive/master.zip">Download code (ZIP)</a> <br /> <br />
-
-			Extract it. Then, you can... <br /><br />
-
-			<h3>Install System-wide</h3>
-			Run:
-
-			<pre><code>
-$ sudo ./install.py
+			<pre><code class="language-bash">
+# Do not worry, this method is not prone to curl-bash security problems
+$ curl https://github.com/bharadwaj-raju/settingsctl/dl-install.sh &gt; /tmp/dl-install.sh && bash /tmp/dl-install.sh
 			</pre></code>
 
-			<h3>Install For User</h3>
+			<p><strong>Or</strong>:</p>
+
+			<p>First download the code from the <a href="https://github.com/bharadwaj-raju/settingsctl">repository</a>. Then…</p>
+
+			<h3>Install locally</h3>
+
 			Run:
 
-			<pre><code>
+			<pre><code class="language-bash">
 $ ./install.py --user
 			</pre></code>
 
-			<h3>Run Without Installing</h3>
-			This is what you should be doing if you want to develop on settingsctl. <br /><br />
+			<h3>Install system-wide</h3>
 
 			Run:
 
-			<pre><code>
+			<pre><code class="language-bash">
+$ sudo ./install.py
+			</pre></code>
+
+			<h3>Run without installation</h3>
+
+			Simply:
+
+			<pre><code class="language-bash">
 $ ./settingsctl --help
 			</pre></code>
+
+
+		</div>
 	</div>
 	</div>
 </body>

@@ -1,68 +1,51 @@
-<!doctype html>
-<html>
-<head>
-	<title>Documentation::Settings - settingsctl</title>
-	<link rel="stylesheet" type="text/css" href="../resources/style.css">
-	<meta charset="utf-8">
-	<link href="../resources/prism.css" rel="stylesheet" />
-</head>
-<body>
-	<script src="../resources/prism.js"></script>
-	<div id="header">
-		<a href="../"><img src="../resources/logo.png" alt="settingsctl" title="settingsctl"/></a>
-		<br />
-		<span id="headerSubtitle">cross-desktop settings tool for *nix</span>
-	</div>
+<pre>
+appearance/
 
-	<div id="menu">
-		<span class="left">
-		<a href="../">home</a>
-		<a class="thisSite" href="../documentation/">docs</a>
-		<a href="https://github.com/bharadwaj-raju/settingsctl">code</a>
-		<a href="../documentation/install.html">install</a>
-		</span>
-	</div>
+	desktop/
 
-	<div id="content">
-		<div id="nav">
-			<ul>
-			<li><a href="../documentation">docs</a></li>
-			<li><a href="../documentation/tutorial.html">tutorial</a></li>
-			<li><a href="../documentation/install.html">installation</a></li>
-			<li><a href="../documentation/faq.html">faq</a></li>
-			<li><a href="../documentation/settings.html" class="thisPage">settings</a></li>
-			<li><a href="../documentation/creating-a-setting.html">creating a setting</a></li>
-			<li><a href="../documentation/json.html">json output</a></li>
-			<li><a href="../documentation/monitor.html">monitor a setting</a></li>
-			<li><a href="../documentation/settings-lib.html">settings lib</a></li>
-			</ul>
-				</div>
+		wallpaper - Wallpaper for each monitor in order
 
-		<div id="main">
-			<h2 id="overview">Overview</h2>
+		workspaces - Workspaces on the desktop
 
-			This page will describe the different settings available to settingsctl. <br /> <br />
+	theme/
 
-			New settings may be added now and then. <br />
-			Updates will be listed at the <a href="../updates.html">Updates</a> page. <br /> <br />
+		gtk/
+			gtk-2 - GTK+ 2 theme
+			gtk-3 - GTK+ 3 theme
 
-			<h2 id="settings">Settings</h2>
+		kde/
+			look-and-feel - KDE desktop style
+			widget-style - KDE widget style
 
-			<ul>
-				<li>
-					appearance
-					<ul>
-						<li>
-							desktop
-							<ul>
-								<li>wallpaper - wallpapers for each monitor in order.</li>
-							</ul>
-						</li>
+		wm - Window manager
 
-					</ul>
-				</li>
-			</ul>
+		icon - Icon theme
 
-	</div>
-	</div>
-</body>
+		mouse - X11 mouse pointer
+
+power/
+
+	screen-lock/
+
+		enabled - Is the screen lock enabled?
+
+		timeout - The timeout for auto-lock
+
+		password-required - Is a password required?
+
+display/
+
+	monitors [read-only] - The monitors connected
+
+	resolution - Resolution for the monitors
+
+	orientation - Display orientation
+
+	refresh-rate - The monitor refresh rate
+
+
+
+platform-specific/
+
+</pre>
+

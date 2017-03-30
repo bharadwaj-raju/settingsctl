@@ -27,6 +27,16 @@ img a:hover {
 	text-decoration: none;
 }
 
+.header {
+	font-style: bold;
+	color: black;
+	text-decoration: none;
+}
+
+.header:hover {
+	text-decoration: none;
+}
+
 .button {
 	background-color: #007dc1;
 	border-radius: 3px;
@@ -67,21 +77,18 @@ img a:hover {
 	clear: both;
 	overflow: hidden;
 	color: #069;
-	background-color: #007dc1;
 	padding: 0.7ex;
 	font-size: 94%;
-	border-top: 1px solid #ccc;
 	border-bottom: 1px solid #069;
 	text-decoration: none;
+	text-align: center;
 }
 
 #menu a {
 	padding: 0.5ex 1ex 0.5ex 1ex;
-	color: #fff;
 }
 
 #menu a:hover {
-	background-color: #069;
 	text-decoration: none;
 }
 
@@ -94,6 +101,7 @@ img a:hover {
 	color: #555;
 	font-size: 1.78em; /*1.7em;*/
 	padding: 0.7ex 0.7ex 0.7ex 0.7em;
+	text-align: center;
 }
 
 #headerSubtitle {
@@ -182,12 +190,11 @@ h4 {
 	margin: 0 0 0 150px;
 	padding: 1.5em;
 	max-width: 50em;
-	border-left: 1px dotted #ccc;
+	border-left: 1px dashed #ccc;
 	height: 100%
 }
 
 .left {
-	float: left;
 	margin: 0;
 	padding: 0;
 }

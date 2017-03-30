@@ -27,11 +27,10 @@ import sys
 import argparse
 import json
 from textwrap import dedent
-import socket
-import uuid
 import subprocess as sp
 from collections import namedtuple
 import builtins
+import time
 
 __version__ = '0.0.1'
 
@@ -73,18 +72,10 @@ elif os.path.isdir(os.environ.get('TMPDIR')):
 else:
 	tmp_dir = '/var/tmp'
 
-socket_file = os.path.join(tmp_dir, 'SETTINGSCTL_IPC.socket')
-json_file = os.path.join(tmp_dir, 'SETTINSGCTL_IPC.json')
+ipc_file = os.path.join(tmp_dir, 'SETTINGSCTL_IPC')
 
-# Map types from the human-readable to Python equivalents
-
-types_map = {
-				'list': list,
-				'string': str,
-				'integer': int,
-				'decimal': float,
-				'boolean': bool
-			}
+if not os.path.exists(ipc_file):
+	open(ipc_file, 'w').close()
 
 # Generates a filesystem tree (as a dictionary) recursively
 
@@ -195,22 +186,29 @@ def get_setting_module(setting):
 	builtins.Process = module_Process
 	builtins.message = module_message
 
-	module = __import__(last, {'Process': module_Process})
+	module = __import__(last)
 
 	return module
 
 # Pretty-print a filesystem tree as provided by fstree()
 
-def pretty(tree, indent=0):
+def pretty(d, indent=0):
+	if isinstance(d, dict):
+		for key, value in d.items():
+			print('  ' * indent + str(key))
+			if isinstance(value, (dict, list)):
+				pretty(value, indent+1)
+			else:
+				print('  ' * (indent+1) + str(value))
 
-	for key, value in tree.items():
-		print('	' * indent + str(key))
-
-		if isinstance(value, dict):
-			pretty(value, indent+1)
-
-		else:
-			print('	' * (indent+1) + str(value))
+	elif isinstance(d, list):
+		for item in d:
+			if isinstance(item, (dict, list)):
+				pretty(item, indent+1)
+			else:
+				print('  ' * (indent+1) + str(item))
+	else:
+		pass
 
 
 # -- Main settingsctl CLI interface (arguments etc)
@@ -328,7 +326,7 @@ class SettingsCtlCLI(object):
 		args.setting = args.setting.replace('.', '/')
 
 		ls_ = [x.replace('.py', '') for x in os.listdir(os.path.join(lib, args.setting))]
-		ls = [x + '/' if os.path.isdir(os.path.join(lib, x)) else x for x in ls_]
+		ls = [x + '/' if os.path.isdir(os.path.join(lib, args.setting, x.replace('.', '/'))) else x for x in ls_]
 
 		if args.json:
 			print(json.dumps(ls))
@@ -359,48 +357,26 @@ class SettingsCtlCLI(object):
 
 		args = parser.parse_args(sys.argv[2:])
 
-		server = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
-		if os.path.exists(socket_file):
-			socket_file_new = socket_file + str(uuid.uuid4())
-
-		else:
-			socket_file_new = socket_file
-
-		server.bind(socket_file_new)
+		start_time = time.time()
 
 		while True:
-
 			try:
-				data = server.recv(1024)
+				if os.path.getmtime(ipc_file) > start_time:
+					start_time = time.time()
+					with open(ipc_file, 'r') as f:
+						message_json = json.loads(f.readline())
 
-			except KeyboardInterrupt:
-				os.remove(socket_file_new)
-				sys.exit(0)
-
-			if not data:
-				break
-
-			else:
-				if data == b'SET':
-					with open(json_file) as f:
-						message_json = json.load(f)
-
-					if args.setting:
 						if message_json['setting'].startswith(args.setting):
 							if args.json:
-								print(json.dumps(message_json, indent=4))
+								print(json.dumps(message_json))
 
 							else:
-								print(args.setting, '→', message_json['value'])
+								print(message_json['setting'], '→', message_json['value'])
 
-					else:
-						if args.json:
-								print(json.dumps(message_json, indent=4))
+						f.close()
 
-						else:
-							print(message_json['setting'], '→', message_json['value'])
-
-
+			except KeyboardInterrupt:
+					sys.exit(0)
 
 	def tree(self):
 
@@ -413,7 +389,6 @@ class SettingsCtlCLI(object):
 							options_etc=dedent('''\
 								Options:
 								  setting		the setting to tree
-								  --max-depth	the maximum depth of the tree. default = infinity
 								  --json		whether to display output in JSON form
 								''')
 							)
@@ -421,19 +396,18 @@ class SettingsCtlCLI(object):
 
 
 		parser.add_argument('setting', nargs='?', default='')
-		parser.add_argument('--max-depth', type=int, nargs='?', const=0)
 		parser.add_argument('--json', action='store_true')
 
 
 		args = parser.parse_args(sys.argv[2:])
 
-		tree = fstree(os.path.join(lib, args.setting), args.max_depth)
+		tree = fstree(os.path.join(lib, args.setting))
 
 		if args.json:
 			print(json.dumps(tree, indent=4))
 
 		else:
-			pretty(fstree(os.path.join(lib, args.setting), args.max_depth))
+			pretty(tree)
 
 
 	def info(self):
@@ -536,10 +510,7 @@ class SettingsCtlCLI(object):
 				sys.exit(1)
 
 		if args.json:
-			print(json.dumps({
-								'setting': args.setting,
-								'value': ls
-							}, indent=4))
+			print(json.dumps(ls, indent=4))
 
 		else:
 			print('\n'.join(ls))
@@ -585,7 +556,16 @@ class SettingsCtlCLI(object):
 					}, indent=4))
 
 		else:
-			print(module.get())
+			retval = module.get()
+
+			if isinstance(retval, dict):
+				pretty(retval)
+
+			elif isinstance(retval, list):
+				print('\n'.join([x.replace('\n', '\\n') for x in retval]))
+
+			else:
+				print(module.get())
 
 
 	def set(self):
@@ -644,12 +624,14 @@ class SettingsCtlCLI(object):
 
 		value_fmt = module.validate(args.value)
 
+		json_repr = {
+						'setting': args.setting,
+						'value': value_fmt,
+						'value-raw': args.value
+					}
+
 		if args.json:
-			print(json.dumps({
-								'setting': args.setting,
-								'value': value_fmt,
-								'value-raw': args.value
-							  }, indent=4))
+			print(json.dumps(json_repr, indent=4))
 
 		else:
 			print(args.value, 'formatted to (by the setting)', value_fmt)
@@ -660,26 +642,9 @@ class SettingsCtlCLI(object):
 
 		module.set(value_fmt)
 
-		try:
-			for f in os.listdir(tmp_dir):
-				if f.startswith('SETTINGSCTL_IPC.socket'):
-					socket_file = os.path.join(tmp_dir, f)
-					client = socket.socket(socket.AF_UNIX, socket.SOCK_DGRAM)
-					client.connect(socket_file)
-
-					with open(json_file, 'w') as f:
-						f.write(json.dumps({
-									'setting': args.setting,
-									'value': value_fmt,
-									'value-raw': args.value
-								}))
-
-					client.send(b'SET')
-
-		except ConnectionRefusedError:
-			pass
-
+		with open(ipc_file, 'w') as f:
+			f.write(json.dumps(json_repr))
 
 
 if __name__ == '__main__':
-	SettingsCtlCLI()
+	cli = SettingsCtlCLI()

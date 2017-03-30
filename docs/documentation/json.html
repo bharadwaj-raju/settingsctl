@@ -24,7 +24,7 @@
 	</div>
 
 	<div id="content">
-		<div id="nav">
+		<nav id="nav">
 			<ul>
 			<li><a href="../documentation">docs</a></li>
 			<li><a href="../documentation/tutorial.html">tutorial</a></li>
@@ -36,7 +36,7 @@
 			<li><a href="../documentation/monitor.html">monitor a setting</a></li>
 			<li><a href="../documentation/settings-lib.html">settings lib</a></li>
 			</ul>
-				</div>
+		</nav>
 
 		<div id="main">
 			<h2 id="overview">Overview</h2>
@@ -55,7 +55,7 @@
 
 			<h3 id="set">set</h3>
 
-			For <code>settingsctl set hello.world.example Hello World</code>:
+			For <code>settingsctl set --json hello.world.example Hello World</code>:
 
 			<pre><code class="language-python">
 {
@@ -72,7 +72,7 @@
 
 			<h3 id="get">get</h3>
 
-			For <code>settingsctl get hello.world.example</code>:
+			For <code>settingsctl get --json hello.world.example</code>:
 
 			<pre><code class="language-python">
 {
@@ -85,7 +85,7 @@
 
 			<h3 id="tree">tree</h3>
 
-			For <code>settingsctl tree hello</code>:
+			For <code>settingsctl tree --json hello</code>:
 
 			<pre><code class="language-python">
 {
@@ -103,7 +103,7 @@
 
 			<h3 id="info">info</h3>
 
-			For <code>settingsctl info hello.world.example</code>:
+			For <code>settingsctl info --json hello.world.example</code>:
 
 			<pre><code class="language-python">
 {
@@ -119,27 +119,29 @@
 
 			<h3 id="list">list</h3>
 
-			For <code>settingsctl list hello</code>:
+			For <code>settingsctl list --json hello</code>:
 
 			<pre><code class="language-python">
 ["world/", "bar/"]
 			</pre></code>
 
-			<h3 id="monitor">monitor</h3>
 
-			For <code>settingsctl monitor hello</code>:
+			<h3 id="list-all">list-all</h3>
+
+			For <code>settingsctl list-all --json hello</code>:
 
 			<pre><code class="language-python">
-{
-    "setting": "hello.world.example",
-	"value": "Hello World",
-	"value-raw": ["Hello", "World"]
-}
-{
-	"setting": "hello.foo.bar",
-	"value": "Example",
-	"value-raw": ["Example"]
-}
+["world", "foo", "bar"]
+			</pre></code>
+
+			<h3 id="monitor">monitor</h3>
+
+
+			For <code>settingsctl monitor --json hello</code>:
+
+			<pre><code class="language-python">
+{"setting": "hello.world.example", "value": "Hello World", "value-raw": ["Hello", "World"]}
+{"setting": "hello.foo.bar", "value": "Example", "value-raw": ["Example"]}
 			</pre></code>
 
 
