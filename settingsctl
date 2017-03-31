@@ -20,7 +20,7 @@
 # If not, see http://www.gnu.org/licenses/gpl.txt
 
 
-# Copyright © Bharadwaj Raju <bharadwaj.raju777@gmail.com>
+# Copyright © Bharadwaj Raju and other contributors (list of contributors: https://github.com/bharadwaj-raju/settingsctl/graphs/contributors)
 
 import os
 import sys
@@ -57,7 +57,7 @@ elif os.path.isdir('/usr/lib/settingsctl'):
 else:
 	print(dedent('''settingsctl: settingsctl settings library not found.\n
 		It should be included with the settingsctl distribution in lib/,\
-		see Documentation::Settingsctl Lib" <https://bharadwaj-raju.github.io/settingsctl/documentation/settingsctl-lib.html>'''))
+		see Documentation::Settings Lib" <https://bharadwaj-raju.github.io/settingsctl/documentation/settingsctl-lib.html>'''))
 
 
 # -- Inter-process Communication
@@ -115,6 +115,8 @@ def fstree(dir_, maxdepth=None):
 # -- Functions provided to all settings
 #    Must be documented
 
+# Convenience function exported to settings
+
 def module_message(message, level='info'):
 
 	'''Causes a message to be produced in the standard way.
@@ -138,6 +140,8 @@ def module_message(message, level='info'):
 	else:
 		sys.stderr.write('{setting}: {level}: {message}\n'.format_map(msg))
 		sys.stderr.flush()
+
+# Convenience function exported to settings
 
 def module_Process(cmd, shell=False, strip=True):
 
@@ -193,25 +197,30 @@ def get_setting_module(setting):
 # Pretty-print a filesystem tree as provided by fstree()
 
 def pretty(d, indent=0):
+
+	total = ''
+
 	if isinstance(d, dict):
 		for key, value in d.items():
-			print('  ' * indent + str(key))
+			total += '  ' * indent + str(key) + '\n'
 			if isinstance(value, (dict, list)):
-				pretty(value, indent+1)
+				total += pretty(value, indent+1)
 			else:
-				print('  ' * (indent+1) + str(value))
-
+				total += '  ' * (indent+1) + str(value) + '\n'
 	elif isinstance(d, list):
 		for item in d:
 			if isinstance(item, (dict, list)):
-				pretty(item, indent+1)
+				total += pretty(item, indent+1)
 			else:
-				print('  ' * (indent+1) + str(item))
+				total += '  ' * (indent+1) + str(item) + '\n'
 	else:
 		pass
 
+	return total
 
-# -- Main settingsctl CLI interface (arguments etc)
+#-- Main settingsctl CLI interface (arguments etc)
+
+# Template for --help outputs
 
 HELP_BOILERPLATE = dedent('''\
 		usage: {usage}
@@ -226,12 +235,17 @@ HELP_BOILERPLATE = dedent('''\
 
 		''')
 
+# Custom ArgumentParser extension to allow custom --help output
+
 class ArgumentParser(argparse.ArgumentParser):
 
 	def set_help(self, help_str):
 
 		self.format_help = lambda: help_str
 
+# settingsctl CLI class
+# main command is implemented in __init__
+# subcommands are implemented in the methods
 
 class SettingsCtlCLI(object):
 
@@ -362,6 +376,7 @@ class SettingsCtlCLI(object):
 		while True:
 			try:
 				if os.path.getmtime(ipc_file) > start_time:
+					# file changed
 					start_time = time.time()
 					with open(ipc_file, 'r') as f:
 						message_json = json.loads(f.readline())
@@ -382,7 +397,7 @@ class SettingsCtlCLI(object):
 
 		parser = ArgumentParser(
 					description='Hierarchial tree of settings',
-					usage='settingsctl tree [setting] [--max-depth] [--json]')
+					usage='settingsctl tree [setting] [--json]')
 
 		parser.set_help(HELP_BOILERPLATE.format(
 							usage=parser.format_usage(),
@@ -407,7 +422,7 @@ class SettingsCtlCLI(object):
 			print(json.dumps(tree, indent=4))
 
 		else:
-			pretty(tree)
+			print(dedent(pretty(tree, indent=4)))
 
 
 	def info(self):
@@ -647,4 +662,4 @@ class SettingsCtlCLI(object):
 
 
 if __name__ == '__main__':
-	cli = SettingsCtlCLI()
+	SettingsCtlCLI()

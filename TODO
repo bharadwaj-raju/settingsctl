@@ -1,0 +1,8 @@
+appearance.desktop.wallpaper:	# TODO: way to get wallpaper for desktops which are commented-out below
+appearance.desktop.wallpaper:			# TODO: support for feh alternatives (nitrogen etc)
+appearance.theme.cursor.size:	# TODO: desktop (and display-server) independent way of cursor size
+appearance.theme.cursor.size:	# TODO: desktop (and display-server) independent way of cursor size
+power.screen-lock.timeout:	# TODO: Needs input for other desktops
+power.screen-lock.timeout:	# TODO: Needs input for other desktops
+power.screen-lock.enabled:	# TODO: Needs input for other desktops
+power.screen-lock.enabled:	# TODO: Needs input for other desktops

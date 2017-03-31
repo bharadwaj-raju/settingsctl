@@ -18,7 +18,7 @@
 # If not, see http://www.gnu.org/licenses/gpl.txt
 
 
-# Copyright © Bharadwaj Raju <bharadwaj.raju777@gmail.com>
+# Copyright © Bharadwaj Raju and other contributors (list of contributors: https://github.com/bharadwaj-raju/settingsctl/graphs/contributors)
 
 import os
 import sys
@@ -81,27 +81,6 @@ def set(data):
 	with open(os.path.join(themes_dir, 'default/index.theme'), 'w') as f:
 		f.write(contents)
 
-	# Reload
-
-	# First, rewrite the gtkrc file to not have any pre-existing
-	# include entries.
-	# Then gtk-theme-name entry is replaced.
-
-	return
-
-	with open(os.path.expanduser('~/.gtkrc-2.0')) as f:
-		gtkrc = f.read()
-
-	for line in gtkrc[:].splitlines():
-		if line.startswith('gtk-theme-name'):
-			gtkrc = gtkrc.replace(line, 'gtk-theme-name = "{}"'.format(data))
-
-		elif line.startswith('include'):
-			gtkrc = gtkrc.replace(line, '')
-
-	with open(os.path.expanduser('~/.gtkrc-2.0'), 'w') as f:
-		f.write(gtkrc)
-
 
 def get():
 
@@ -126,8 +105,6 @@ def get():
 
 	# Still nothing?
 	message('no cursor theme seems to be defined', level='warning')
-
-
 
 
 def list_all(dir=False):

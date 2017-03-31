@@ -18,7 +18,7 @@
 # If not, see http://www.gnu.org/licenses/gpl.txt
 
 
-# Copyright © Bharadwaj Raju <bharadwaj.raju777@gmail.com>
+# Copyright © Bharadwaj Raju and other contributors (list of contributors: https://github.com/bharadwaj-raju/settingsctl/graphs/contributors)
 
 import os
 import sys
@@ -38,8 +38,12 @@ desktop_env = Process([os.environ.get('SETTINGSCTL_BIN'), 'get', 'desktop-enviro
 
 def validate(data):
 
+	if len(data) > 1:
+		message('only one wallpaper can be set', 'error')
+		sys.exit(1)
+
 	if not os.path.isfile(data[0]):
-		print('{name}: cannot access "{file}": no such file.'.format(name=setting, file=data[0]))
+		message('no such file "{}"'.format(data[0]), 'error')
 		sys.exit(1)
 
 	return data[0]
@@ -51,11 +55,6 @@ def info():
 				'description': 'The current desktop background/wallpaper',
 				'data': ['file path to the wallpaper'],
 			}
-
-def set(data):
-
-	pass  # TODO
-
 
 def get():
 
@@ -156,7 +155,6 @@ def get():
 					if not i in ['', ' ', '  ', '\n']:
 						return(i.replace("'", ''))
 
-	# TODO: way to get wallpaper for desktops which are commented-out below
 	elif desktop_env == 'icewm':
 		with open(os.path.expanduser('~/.icewm/preferences')) as f:
 			for line in f:
@@ -182,6 +180,8 @@ def get():
 						len(awesome_wallpaper) - 1].strip().replace('"', '').replace("'", '')
 
 					return os.path.expanduser(awesome_wallpaper)
+
+	# TODO: way to get wallpaper for desktops which are commented-out below
 
 	# elif desktop_env == 'blackbox':
 	# 	args = ['bsetbg', '-full', image]
@@ -304,7 +304,8 @@ def set(image):
 			args = ['feh', '--bg-scale', image]
 			Process(args)
 		except:
-			pass # TODO: feh alts support
+			pass
+			# TODO: support for feh alternatives (nitrogen etc)
 
 	elif desktop_env == 'icewm':
 		args = ['icewmbg', image]

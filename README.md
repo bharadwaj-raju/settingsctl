@@ -50,6 +50,8 @@ Firstly, the language: settingsctl is written in Python 3.
 
 The coding conventions are mainly [PEP8](http://pep8.org), but with one notable exception: Tabs are used instead of spaces.
 
+See also the `TODO` file included, which has a list of things to be done.
+
 ### Contributing a new setting
 
 1. Fork the repository.

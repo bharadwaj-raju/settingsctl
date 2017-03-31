@@ -18,7 +18,7 @@
 # If not, see http://www.gnu.org/licenses/gpl.txt
 
 
-# Copyright © Bharadwaj Raju <bharadwaj.raju777@gmail.com>
+# Copyright © Bharadwaj Raju and other contributors (list of contributors: https://github.com/bharadwaj-raju/settingsctl/graphs/contributors)
 
 import os
 import sys

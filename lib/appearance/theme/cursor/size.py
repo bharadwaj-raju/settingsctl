@@ -22,53 +22,43 @@
 
 import os
 import sys
+import subprocess as sp
+from textwrap import dedent
+import errno
 
-setting = 'desktop-specific.kde.mouse-click'
-
-config_home = os.path.expanduser(os.environ.get('XDG_CONFIG_HOME', '~/.config'))
-settings_file = os.path.join(config_home, 'kdeglobals')
+setting = 'appearance.theme.cursor.size'
 
 def validate(data):
 
-	if data[0].lower() not in ['single', 'double']:
-		message('value must be one of "single" or "double"', 'error')
+	if len(data) > 1:
+		message('only one size can be set', 'error')
 		sys.exit(1)
 
-	return data[0].lower()
+	try:
+		int(data[0])
+
+	except:
+		message('value must be an integer', 'error')
+		sys.exit(1)
+
+	return int(data[0])
 
 def info():
 
 	return {
 				'type': ['string'],
-				'description': 'Whether to use single or double click to open files and folders in KDE',
-				'data': ['must be one of "single" or "double"'],
+				'description': 'The mouse cursor theme',
+				'data': ['name of the theme'],
 			}
 
 def set(data):
 
-	# Replace SingleClick={true|false} entry in kdeglobals.
-
-	with open(settings_file) as f:
-		settings = f.read()
-
-	for line in settings[:].splitlines():
-		if line.startswith('SingleClick'):
-			settings = settings.replace(line, 'SingleClick={}'.format('true' if data == 'single' else 'false'))
-
-	with open(settings_file, 'w') as f:
-		f.write(settings)
+	return
+	# TODO: desktop (and display-server) independent way of cursor size
 
 
 def get():
 
-	# Scan kdeglobals for SingleClick configuration entries
+	return
 
-	with open(settings_file) as f:
-		for line in f:
-			if line.startswith('SingleClick'):
-				theme = line.split('=', 1)[-1].replace('"', '').strip()
-
-	return 'single' if theme in ['true', '1'] else 'double'
-
-
-
+	# TODO: desktop (and display-server) independent way of cursor size

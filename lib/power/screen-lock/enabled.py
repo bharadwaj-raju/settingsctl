@@ -24,7 +24,7 @@ import os
 import sys
 from textwrap import dedent
 
-setting = 'power.screen-lock.timeout'
+setting = 'power.screen-lock.enabled'
 
 desktop_env = Process([os.environ.get('SETTINGSCTL_BIN'), 'get', 'desktop-environment']).stdout
 
@@ -37,37 +37,36 @@ else:
 def validate(data):
 
 	if len(data) > 1:
-		message('only one timeout value can be set', 'error')
+		message('only one boolean (true/false) value can be set', 'error')
 		sys.exit(1)
 
-	try:
-		return int(data[0])
-
-	except ValueError:
-		message('value must be an integer', 'error')
+	if data[0].lower() not in ['true', 'false']:
+		message('value must be a boolean ("true" or "false")', 'error')
 		sys.exit(1)
+
+	return data[0].lower()
 
 def info():
 
 	return {
-				'type': ['integer'],
-				'description': 'The time in seconds before the screen locks itself',
-				'data': ['seconds before lock'],
+				'type': ['boolean'],
+				'description': 'Whether screen lock is enabled or not',
+				'data': ['is screen lock enabled?'],
 			}
 
 def set(data):
 
 	if desktop_env in ['gnome', 'unity', 'cinnamon', 'pantheon', 'budgie']:
 		Process(['gsettings', 'set', 'org.gnome.desktop.screensaver',
-				 'lock-delay', str(data)])
+				 'lock-enabled', data])
 
 	elif desktop_env == 'kde':
 		with open(os.path.join(xdg_config_home, 'kscreenlockerrc')) as f:
 			contents = f.read()
 
 		for line in contents[:]:
-			if line.startswith('LockGrace='):
-				contents.replace(line, str('LockGrace=' + str(data)))
+			if line.startswith('Autolock='):
+				contents.replace(line, 'Autolock=' + data)
 
 		with open(os.path.join(xdg_config_home, 'kscreenlockerrc'), 'w') as f:
 			f.write(contents)
@@ -78,13 +77,14 @@ def set(data):
 def get():
 
 	if desktop_env in ['gnome', 'unity', 'cinnamon', 'pantheon', 'budgie']:
-		return int(Process(['gsettings', 'get', 'org.gnome.desktop.screensaver',
-				 'lock-delay']).stdout)
+		return Process(['gsettings', 'get', 'org.gnome.desktop.screensaver',
+				 'lock-enabled']).stdout
 
 	elif desktop_env == 'kde':
 		with open(os.path.join(xdg_config_home, 'kscreenlockerrc')) as f:
 			for line in f:
-				if line.startswith('LockGrace='):
-					return int(line.split('=', 1)[-1].strip())
+				if line.startswith('Autolock='):
+					return line.split('=', 1)[-1].strip()
 
 	# TODO: Needs input for other desktops
+
