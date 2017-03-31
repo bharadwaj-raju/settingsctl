@@ -36,8 +36,8 @@ Also see [Documentation::Tutorial](https://bharadwaj-raju.github.io/settingsctl/
 
 ## Features
 
-- Support for nearly every setting you may find in a desktop environment's settings.
-- Support for nearly every desktop environment (Yours isn't supported? [File an issue!](https://github.com/bharadwaj-raju/settingsctl/issues/new))
+- Support for nearly every setting you may find in a desktop environment's settings. (*To be done by v1.0*)
+- Support for nearly every desktop environment (Yours isn't supported? [File an issue!](https://github.com/bharadwaj-raju/settingsctl/issues/new)) (*To be done by v1.0*)
 - Support for optional JSON output format for easy parsing
 - Extensive [documentation](https://bharadwaj-raju.github.io/settingsctl/documentation)
 
